@@ -1,0 +1,62 @@
+-- Auto verleihen
+--------------------------------------
+/*
+ * 1. Überprüfen ob Kunde bereits ein Auto ausgeliehen hat
+ * 1.1 KUNDEN_ID mit Vorname und Nachname herausfinden
+ * 1.2 Überprüfen ob die KUNDEN_ID bereits in der Verleih Tabelle vorhanden ist, wenn ja abbrechen
+ * 2. EXEMPLAR_ID herausfinden
+ * 3. Verfügbarkeit am Standort prüfen
+ * 4. Überprüfen ob das Exemplar Schaeden hat
+ * 5. STATUS_ID in Exemplar Tabelle auf 1 (Verliehen) setzen
+ * 6. In Verleih Tabelle EXEMPLAR_ID, KUNDE_ID, VERLEIHEN_AB, VERLEIHEN_BIS, RETOURNIERT = 0 und MITARBEITER_ID einfügen
+*/
+
+SELECT * FROM VERLEIH;
+SELECT * FROM STATUS;
+SELECT * FROM SCHAEDEN;
+SELECT * FROM MITARTBEITER;
+SELECT * FROM KUNDE;
+SELECT * FROM PERSON;
+SELECT * FROM HERSTELLER;
+SELECT * FROM EXEMPLAR;
+SELECT * FROM AUTO_DETAILS;
+
+-- 1. Überprüfen ob Kunde bereits ein Auto ausgeliehen hat
+-- 1.1 KUNDEN_ID mit Vorname und Nachname herausfinden
+SELECT KUNDE.KUNDEN_ID
+FROM PERSON JOIN KUNDE ON PERSON.PERSON_ID = KUNDE.PERSON_ID
+WHERE PERSON.VORNAME = 'Tom' AND
+      PERSON.NACHNAME = 'Turbo';
+
+-- 1.2 Überprüfen ob die KUNDEN_ID bereits in der Verleih Tabelle vorhanden ist, wenn ja abbrechen
+SELECT COUNT(*)
+FROM VERLEIH
+WHERE KUNDE_ID = 2 AND
+      RETOURNIERT = 0;
+    
+-- 2. EXEMPLAR_ID herausfinden
+SELECT EXEMPLAR_ID
+FROM EXEMPLAR JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAILS_ID
+              JOIN HERSTELLER ON HERSTELLER.HERSTELLER_ID = AUTO_DETAILS.HERSTELLER_ID
+WHERE HERSTELLER.BEZEICHNUNG = 'Ferrari' AND
+      AUTO_DETAILS.MODELL_BESCHREIBUNG = 'F40';
+
+-- 3. Verfügbarkeit am Standort prüfen
+SELECT COUNT(*)
+FROM EXEMPLAR
+WHERE STANDORT_ID = 1 AND
+      EXEMPLAR_ID = 2;
+
+-- 4. Überprüfen ob das Exemplar Schaeden hat
+SELECT SCHAEDEN_ID
+FROM EXEMPLAR
+WHERE EXEMPLAR_ID = 2;
+
+-- 5. STATUS_ID in Exemplar Tabelle auf 1 (Verliehen) setzen
+UPDATE EXEMPLAR
+SET STATUS_ID = 1 -- verliehen
+WHERE EXEMPLAR_ID = 2;
+
+-- 6. In Verleih Tabelle EXEMPLAR_ID, KUNDE_ID, VERLEIHEN_AB, VERLEIHEN_BIS, RETOURNIERT = 0 und MITARBEITER_ID einfügen
+INSERT INTO VERLEIH (VERLEIH_ID, EXEMPLAR_ID, KUNDE_ID, VERLIEHEN_AB, VERLIEHEN_BIS, RETOURNIERT, MITARBEITER_ID) VALUES (verleih_seq.NEXTVAL, 2, 2, TO_DATE('08/11/2019 09:15', 'DD/MM/YYYY HH24:MI'), TO_DATE('15/11/2019 10:15', 'DD/MM/YYYY HH24:MI'), 0, 1);
+
