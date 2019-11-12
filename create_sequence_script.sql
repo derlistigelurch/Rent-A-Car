@@ -76,3 +76,4 @@ CREATE SEQUENCE auto_details_seq
   START WITH 1
   INCREMENT BY 1
   NOCACHE;
+
