@@ -1,5 +1,10 @@
--- 1. Mahnungsansicht
--------------------------------------
+/*********************************************************************
+/**
+/** Table: mahnungen_view
+/** Developer: 
+/** Description: Zeigt die Daten aller Kunden an, die ihr ausgeliehenes Auto noch nicht zurückgebracht haben
+/**
+/*********************************************************************/
 CREATE OR REPLACE VIEW mahnungen_view
 AS
 SELECT KUNDE.KUNDE_ID AS kundennummer, PERSON.VORNAME, PERSON.NACHNAME, VERLEIH.VERLIEHEN_BIS, EXEMPLAR.KENNZEICHEN, HERSTELLER.BEZEICHNUNG, AUTO_DETAILS.MODELL_BESCHREIBUNG
@@ -10,10 +15,14 @@ FROM VERLEIH JOIN KUNDE ON KUNDE.KUNDE_ID = VERLEIH.KUNDE_ID
              JOIN HERSTELLER ON HERSTELLER.HERSTELLER_ID = AUTO_DETAILS.HERSTELLER_ID
 WHERE RETOURNIERT = 0 AND
       VERLIEHEN_BIS < SYSDATE;
--------------------------------------
 
--- 2. Verfügbare Autos anzeigen (Hauptsandort)
--------------------------------------
+/*********************************************************************
+/**
+/** Table: autos_hauptstandort_view
+/** Developer: 
+/** Description: Gibt alle verfügbaren Autos am Hauptstandort aus
+/**
+/*********************************************************************/
 CREATE OR REPLACE VIEW autos_hauptstandort_view
 AS
 SELECT EXEMPLAR.EXEMPLAR_ID, EXEMPLAR.FARBE, EXEMPLAR.ERSTZULASSUNG, HERSTELLER.BEZEICHNUNG, AUTO_DETAILS.MODELL_BESCHREIBUNG, AUTO_DETAILS.PS, AUTO_DETAILS.VERBRAUCH, AUTO_DETAILS.SITZPLAETZE, PREISLISTE.KOSTEN_PRO_TAG
@@ -23,10 +32,14 @@ FROM EXEMPLAR JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAIL
 WHERE STANDORT_ID = 1 AND
       EXEMPLAR.SCHAEDEN_ID IS NULL AND
       EXEMPLAR.STATUS_ID = 2;
--------------------------------------
 
--- 3. Alle Autos mit Details und Preis pro Tag anzeigen
--------------------------------------
+/*********************************************************************
+/**
+/** Table: verfuegbare_autos_view
+/** Developer: 
+/** Description: Beinhaltet alle Autos am Haupt- und Nebenstandort
+/**
+/*********************************************************************/
 CREATE OR REPLACE VIEW verfuegbare_autos_view
 AS
 SELECT EXEMPLAR.EXEMPLAR_ID, EXEMPLAR.ERSTZULASSUNG, EXEMPLAR.FARBE, HERSTELLER.BEZEICHNUNG, AUTO_DETAILS.MODELL_BESCHREIBUNG, AUTO_DETAILS.PS, AUTO_DETAILS.SITZPLAETZE, AUTO_DETAILS.VERBRAUCH, PREISLISTE.KOSTEN_PRO_TAG, STANDORT.BEZEICHNUNG AS STANDORT, ADRESSE.STRASSE || ' ' || ADRESSE.HAUSNUMMER AS adresse, POSTLEITZAHL.PLZ, POSTLEITZAHL.ORTSNAME
@@ -38,10 +51,14 @@ FROM EXEMPLAR JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAIL
               JOIN POSTLEITZAHL ON ADRESSE.PLZ = POSTLEITZAHL.PLZ
 WHERE EXEMPLAR.SCHAEDEN_ID IS NULL AND
       EXEMPLAR.STATUS_ID = 2;
--------------------------------------
 
--- 4. Beschädigte Autos anzeigen
--------------------------------------
+/*********************************************************************
+/**
+/** Table: auto_schaeden_view
+/** Developer: 
+/** Description: Beinhaltet alle Autos mit Schäden
+/**
+/*********************************************************************/
 CREATE OR REPLACE VIEW auto_schaeden_view
 AS
 SELECT EXEMPLAR.EXEMPLAR_ID, EXEMPLAR.KENNZEICHEN, HERSTELLER.BEZEICHNUNG || ' ' || AUTO_DETAILS.MODELL_BESCHREIBUNG AS modell, SCHAEDEN.BESCHREIBUNG, STANDORT.BEZEICHNUNG AS STANDORT
@@ -50,14 +67,35 @@ FROM EXEMP_SCHAEDEN JOIN EXEMPLAR ON EXEMPLAR.EXEMPLAR_ID = EXEMP_SCHAEDEN.EXEMP
                     JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAILS_ID
                     JOIN HERSTELLER ON HERSTELLER.HERSTELLER_ID = AUTO_DETAILS.HERSTELLER_ID
                     JOIN STANDORT ON STANDORT.STANDORT_ID = EXEMPLAR.STANDORT_ID;
--------------------------------------
 
--- 5. Kundendaten anzeigen
--------------------------------------
+/*********************************************************************
+/**
+/** Table: kundendaten_view
+/** Developer: 
+/** Description: Zeigt Kundendate an
+/**
+/*********************************************************************/
 CREATE OR REPLACE VIEW kundendaten_view
 AS
 SELECT KUNDE.KUNDE_ID AS KUNDENNUMMER, PERSON.VORNAME, PERSON.NACHNAME, PERSON.GEBURTSTDATUM, ADRESSE.STRASSE, ADRESSE.HAUSNUMMER, ADRESSE.TUERNUMMER, POSTLEITZAHL.PLZ, POSTLEITZAHL.ORTSNAME
 FROM KUNDE JOIN PERSON ON KUNDE.PERSON_ID = PERSON.PERSON_ID
            JOIN ADRESSE ON ADRESSE.ADRESS_ID = PERSON.ADRESS_ID
            JOIN POSTLEITZAHL ON ADRESSE.PLZ = POSTLEITZAHL.PLZ;
--------------------------------------
+
+/*********************************************************************
+/**
+/** Table: rechnungen_view
+/** Developer: 
+/** Description: Zeigt alle Rechnungen an
+/**
+/*********************************************************************/
+CREATE OR REPLACE VIEW rechnungen_view
+AS
+SELECT VERLEIH.VERLEIH_ID, KUNDE.KUNDE_ID, PERSON.VORNAME, PERSON.NACHNAME, VERLEIH.MITARBEITER_ID, HERSTELLER.BEZEICHNUNG, AUTO_DETAILS.MODELL_BESCHREIBUNG, CAST(VERLEIH.VERLIEHEN_BIS AS DATE) - CAST(VERLEIH.VERLIEHEN_AB AS DATE) AS dauer, PREISLISTE.KOSTEN_PRO_TAG, PREISLISTE.KOSTEN_PRO_TAG * CAST(CAST(VERLEIH.VERLIEHEN_BIS AS DATE) - CAST(VERLEIH.VERLIEHEN_AB AS DATE) AS NUMBER) AS kosten_insgesamt
+FROM VERLEIH JOIN KUNDE ON KUNDE.KUNDE_ID = VERLEIH.KUNDE_ID
+             JOIN PERSON ON KUNDE.PERSON_ID = PERSON.PERSON_ID
+             JOIN ADRESSE ON ADRESSE.ADRESS_ID = PERSON.ADRESS_ID             
+             JOIN EXEMPLAR ON EXEMPLAR.EXEMPLAR_ID = VERLEIH.EXEMPLAR_ID
+             JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAILS_ID
+             JOIN HERSTELLER ON HERSTELLER.HERSTELLER_ID = AUTO_DETAILS.HERSTELLER_ID
+             JOIN PREISLISTE ON PREISLISTE.PREIS_ID = AUTO_DETAILS.PREIS_ID

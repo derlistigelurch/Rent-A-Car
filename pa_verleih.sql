@@ -1,0 +1,7 @@
+SET SERVEROUTPUT ON;
+/
+CREATE OR REPLACE PACKAGE pa_verleih
+AS
+
+END pa_verleih;
+/

@@ -4,7 +4,7 @@ CREATE OR REPLACE PACKAGE pa_kunde
 AS
   /*********************************************************************
   /**
-  /** Procedure: f_get_kunde_id_i
+  /** Procedure: sp_get_kunde_id_i
   /** Out: l_i_kunde_id_ou - ID des Kunden
   /** In: l_v_vorname_in - Vorname des Kunden
   /** In: l_v_nachname_in - Nachname des Kunden
@@ -14,10 +14,9 @@ AS
   /**********************************************************************/
   PROCEDURE sp_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_i_kunde_id_ou OUT INTEGER);
   
-  
   /*********************************************************************
   /**
-  /** Procedure: f_get_car_count_i
+  /** Procedure: sp_get_car_count_bi
   /** Out: l_bi_car_count_ou - Anzahl der Autos die ein Kunde ausgeliehen hat max. 1, min. 0
   /** In: l_i_kunde_id_in - ID des Kunden
   /** Developer: 
@@ -83,4 +82,3 @@ AS
     END sp_insert_kunde_i;
 END;
 /
-
