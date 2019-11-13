@@ -11,8 +11,6 @@ FROM VERLEIH JOIN KUNDE ON KUNDE.KUNDE_ID = VERLEIH.KUNDE_ID
 WHERE RETOURNIERT = 0 AND
       VERLIEHEN_BIS < SYSDATE;
 -------------------------------------
--- Überprüfen ob alles funktioniert
-SELECT * FROM mahnungen_view;
 
 -- 2. Verfügbare Autos anzeigen (Hauptsandort)
 -------------------------------------
@@ -23,10 +21,9 @@ FROM EXEMPLAR JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAIL
               JOIN HERSTELLER ON HERSTELLER.HERSTELLER_ID = AUTO_DETAILS.HERSTELLER_ID
               JOIN PREISLISTE ON PREISLISTE.PREIS_ID = AUTO_DETAILS.PREIS_ID
 WHERE STANDORT_ID = 1 AND
-      EXEMPLAR.SCHAEDEN_ID IS NULL;
+      EXEMPLAR.SCHAEDEN_ID IS NULL AND
+      EXEMPLAR.STATUS_ID = 2;
 -------------------------------------
--- Überprüfen ob alles funktioniert
-SELECT * FROM autos_hauptstandort_view;
 
 -- 3. Alle Autos mit Details und Preis pro Tag anzeigen
 -------------------------------------
@@ -39,10 +36,9 @@ FROM EXEMPLAR JOIN AUTO_DETAILS ON AUTO_DETAILS.DETAIL_ID = EXEMPLAR.AUTO_DETAIL
               JOIN STANDORT ON STANDORT.STANDORT_ID = EXEMPLAR.STANDORT_ID
               JOIN ADRESSE ON STANDORT.ADRESS_ID = ADRESSE.ADRESS_ID
               JOIN POSTLEITZAHL ON ADRESSE.PLZ = POSTLEITZAHL.PLZ
-WHERE EXEMPLAR.SCHAEDEN_ID IS NULL;
+WHERE EXEMPLAR.SCHAEDEN_ID IS NULL AND
+      EXEMPLAR.STATUS_ID = 2;
 -------------------------------------
--- Überprüfen ob alles funktioniert
-SELECT * FROM verfuegbare_autos_view;
 
 -- 4. Beschädigte Autos anzeigen
 -------------------------------------
@@ -55,8 +51,6 @@ FROM EXEMP_SCHAEDEN JOIN EXEMPLAR ON EXEMPLAR.EXEMPLAR_ID = EXEMP_SCHAEDEN.EXEMP
                     JOIN HERSTELLER ON HERSTELLER.HERSTELLER_ID = AUTO_DETAILS.HERSTELLER_ID
                     JOIN STANDORT ON STANDORT.STANDORT_ID = EXEMPLAR.STANDORT_ID;
 -------------------------------------
--- Überprüfen ob alles funktioniert
-SELECT * FROM auto_schaeden_view;
 
 -- 5. Kundendaten anzeigen
 -------------------------------------
@@ -67,5 +61,3 @@ FROM KUNDE JOIN PERSON ON KUNDE.PERSON_ID = PERSON.PERSON_ID
            JOIN ADRESSE ON ADRESSE.ADRESS_ID = PERSON.ADRESS_ID
            JOIN POSTLEITZAHL ON ADRESSE.PLZ = POSTLEITZAHL.PLZ;
 -------------------------------------
--- Überprüfen ob alles funktioniert
-SELECT * FROM kundendaten_view;
