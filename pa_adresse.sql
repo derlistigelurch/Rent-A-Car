@@ -73,11 +73,11 @@ AS
     l_i_adress_id INTEGER;
     BEGIN
       SELECT adresse_seq.NEXTVAL 
-      INTO adress_id
+      INTO l_i_adress_id
       FROM DUAL;
       
       INSERT INTO ADRESSE (ADRESS_ID, STRASSE, HAUSNUMMER, TUERNUMMER, PLZ) 
-      VALUES (adress_id, l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in)
+      VALUES (l_i_adress_id, l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in)
       RETURNING l_i_adress_id
       INTO l_i_adress_id_ou;
     END sp_insert_adresse_row;
