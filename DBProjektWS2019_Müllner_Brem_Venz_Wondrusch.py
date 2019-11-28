@@ -10,8 +10,9 @@ class userInterface:
         self.control_unit = 0
         self.database = databaseAction()
         self.flag = 0
-        #self.connection = cx_Oracle.connect('username/password@localhost')
-        #self.cursor = cx_Oracle.cursor() 
+        self.dsn_tns = cx_Oracle.makedsn('10.201.80.33','11521',service_name='XE')
+        self.connection = cx_Oracle.connect(user=r'system', password='oracle', dsn=self.dsn_tns) # jdbc:oracle:thin:@infdb.technikum-wien.at:1521/o10
+        self.cursor = self.connection.cursor() 
 
     #Welcome screen
     @staticmethod
@@ -34,7 +35,10 @@ class userInterface:
         print("- 3.) Add entry                       -")
         print("- 666.) -quit program-                -")
         print("---------------------------------------")
-        
+
+        self.cursor.execute('SELECT username FROM dba_users')
+        for row in self.cursor:
+            print(row)
         self.control_unit = int(input("Please choose your option: "))
 
     #SCREEN: Show possible views
@@ -147,8 +151,8 @@ class userInterface:
 
         elif (self.control_unit == 666):
                 print("Quitting... nobody cares :*")
-                #self.cursor.close()
-                #self.connection.close()
+                self.cursor.close()
+                self.connection.close()
                 exit(0)
 
         else:
@@ -159,7 +163,7 @@ class userInterface:
     # controller values:                         #        
     # 0 = Main Screen                            #
     # 10-19 = show Views screen                  #
-    # 20-29 = edit databse 
+    # 20-29 = edit database 
     ##############################################
     def controller(self):
         if self.control_unit == 0:
@@ -171,8 +175,8 @@ class userInterface:
                 self.control_unit = 20
             elif self.control_unit == 666:
                 print("Quitting... nobody cares :*")
-                #self.cursor.close()
-                #self.connection.close()
+                self.cursor.close()
+                self.connection.close()
                 exit(0)
 
             else:
@@ -187,8 +191,8 @@ class userInterface:
 
         elif self.control_unit > 600:
             print("Quitting... 0 fucks given :**")
-            #self.cursor.close()
-            #self.connection.close()
+            self.cursor.close()
+            self.connection.close()
             exit(0)
 
         else:
@@ -202,7 +206,7 @@ class databaseAction:
 
     def addCustomer(self):
         print("Hello World")
-        #self.cursor.execute(SQL)
+        self.cursor.execute(SQL)
 
     def editCustomer(self):
         print("Hello World")
