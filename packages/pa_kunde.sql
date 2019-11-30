@@ -81,7 +81,7 @@ AS
   AS
     BEGIN    
       INSERT INTO  KUNDE (KUNDE_ID, PERSON_ID) 
-      VALUES (kunde_seq.NEXTVAL, l_i_person_id_in)
+      VALUES (kunden_seq.NEXTVAL, l_i_person_id_in)
       RETURNING KUNDE_ID
       INTO l_i_kunde_id_ou;
       COMMIT;
@@ -93,3 +93,4 @@ AS
   /*************************************************************************/
 END;
 /
+COMMIT;
