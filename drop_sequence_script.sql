@@ -12,3 +12,4 @@ DROP SEQUENCE exemplar_seq;
 DROP SEQUENCE verleih_seq;
 DROP SEQUENCE exemp_schaden_seq;
 DROP SEQUENCE auto_details_seq;
+DROP SEQUENCE err_table_seq;
