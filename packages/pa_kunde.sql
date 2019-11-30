@@ -4,7 +4,7 @@ CREATE OR REPLACE PACKAGE pa_kunde
 AS
   /*********************************************************************
   /**
-  /** Procedure: sp_get_kunde_id_i
+  /** Procedure: sp_get_kunde_id
   /** Out: l_i_kunde_id_ou - ID des Kunden
   /** In: l_v_vorname_in - Vorname des Kunden
   /** In: l_v_nachname_in - Nachname des Kunden
@@ -12,29 +12,29 @@ AS
   /** Description: Ausgabe der Kunden ID
   /**
   /**********************************************************************/
-  PROCEDURE sp_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_i_kunde_id_ou OUT INTEGER);
+  PROCEDURE sp_get_kunde_id (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_i_kunde_id_ou OUT INTEGER);
   
   /*********************************************************************
   /**
-  /** Procedure: sp_get_car_count_bi
+  /** Procedure: sp_get_car_count
   /** Out: l_bi_car_count_ou - Anzahl der Autos die ein Kunde ausgeliehen hat max. 1, min. 0
   /** In: l_i_kunde_id_in - ID des Kunden
   /** Developer: 
   /** Description: Anzahl der Autos die ein Kunde ausgeliehen hat ausgeben
   /**
   /**********************************************************************/
-  PROCEDURE sp_get_car_count_bi (l_i_kunde_id_in IN INTEGER, l_bi_car_count_ou OUT INTEGER);
+  PROCEDURE sp_get_car_count (l_i_kunde_id_in IN INTEGER, l_bi_car_count_ou OUT INTEGER);
   
   /*********************************************************************
   /**
-  /** Procedure: sp_insert_kunde_i
+  /** Procedure: sp_insert_kunde
   /** Out: l_i_kunde_id_ou - ID des Kunden
   /** In: l_i_person_id_in - Person ID
   /** Developer: 
   /** Description: Neuen Kunden anlegen
   /**
   /**********************************************************************/
-  PROCEDURE sp_insert_kunde_i (l_i_person_id_in IN INTEGER, l_i_kunde_id_ou OUT INTEGER);
+  PROCEDURE sp_insert_kunde (l_i_person_id_in IN INTEGER, l_i_kunde_id_ou OUT INTEGER);
 END pa_kunde;
 /
 
@@ -42,8 +42,8 @@ END pa_kunde;
 --------------------------------------
 CREATE OR REPLACE PACKAGE BODY pa_kunde
 AS
-  /* sp_get_kunde_id_i definition *******************************************/
-  PROCEDURE sp_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_i_kunde_id_ou OUT INTEGER)
+  /* sp_get_kunde_id definition *********************************************/
+  PROCEDURE sp_get_kunde_id (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_i_kunde_id_ou OUT INTEGER)
   AS
     BEGIN
       SELECT KUNDE.KUNDE_ID
@@ -51,11 +51,17 @@ AS
       FROM PERSON JOIN KUNDE ON PERSON.PERSON_ID = KUNDE.PERSON_ID
       WHERE PERSON.VORNAME = l_v_vorname_in AND
             PERSON.NACHNAME = l_v_nachname_in;
-    END sp_get_kunde_id_i;
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        l_i_kunde_id_ou := 0;
+      WHEN OTHERS THEN
+        l_i_kunde_id_ou := 0;
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+    END sp_get_kunde_id;
   /*************************************************************************/
   
-  /* sp_get_car_count_i definition *****************************************/
-  PROCEDURE sp_get_car_count_bi (l_i_kunde_id_in IN INTEGER, l_bi_car_count_ou OUT INTEGER)
+  /* sp_get_car_count definition *******************************************/
+  PROCEDURE sp_get_car_count (l_i_kunde_id_in IN INTEGER, l_bi_car_count_ou OUT INTEGER)
   AS
     BEGIN
       SELECT COUNT(*)
@@ -63,22 +69,27 @@ AS
       FROM VERLEIH
       WHERE VERLEIH.KUNDE_ID = l_i_kunde_id_in AND
             VERLEIH.RETOURNIERT = 0;
-     END sp_get_car_count_bi;
+    EXCEPTION
+      WHEN OTHERS THEN
+        l_bi_car_count_ou := 0;
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+    END sp_get_car_count;
   /*************************************************************************/
 
-  /* sp_kunde_anlegen_i definition *****************************************/
-  PROCEDURE sp_insert_kunde_i (l_i_person_id_in IN INTEGER, l_i_kunde_id_ou OUT INTEGER)
+  /* sp_kunde_anlegen definition *******************************************/
+  PROCEDURE sp_insert_kunde (l_i_person_id_in IN INTEGER, l_i_kunde_id_ou OUT INTEGER)
   AS
-    l_i_kunde_id INTEGER;
     BEGIN    
-      SELECT kunden_seq.NEXTVAL 
-      INTO l_i_kunde_id
-      FROM DUAL;
-      
       INSERT INTO  KUNDE (KUNDE_ID, PERSON_ID) 
-      VALUES (l_i_kunde_id, l_i_person_id_in)
-      RETURNING l_i_kunde_id
+      VALUES (kunde_seq.NEXTVAL, l_i_person_id_in)
+      RETURNING KUNDE_ID
       INTO l_i_kunde_id_ou;
-    END sp_insert_kunde_i;
+      COMMIT;
+    EXCEPTION
+      WHEN OTHERS THEN
+        l_i_kunde_id_ou := 0;
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+    END sp_insert_kunde;
+  /*************************************************************************/
 END;
 /
