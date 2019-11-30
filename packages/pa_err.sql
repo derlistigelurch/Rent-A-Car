@@ -23,6 +23,7 @@ AS
     BEGIN
       INSERT INTO ERR_TABLE (ERR_ID, ERR_CODE, ERR_MSG) 
       VALUES (err_table_seq.NEXTVAL, i_n_err_code, i_v_err_msg);
+      COMMIT;
     END sp_err_handling;
   /*************************************************************************/
 END;

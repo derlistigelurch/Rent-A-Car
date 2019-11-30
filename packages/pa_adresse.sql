@@ -55,7 +55,7 @@ AS
       WHERE PLZ = l_i_plz_in;
     EXCEPTION
       WHEN OTHERS THEN
-        sp_get_plz_count := -1;
+        l_bi_plz_count_ou := -1;
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
     END sp_get_plz_count;
   /*************************************************************************/
@@ -80,7 +80,7 @@ AS
   AS
     BEGIN      
       INSERT INTO ADRESSE (ADRESS_ID, STRASSE, HAUSNUMMER, TUERNUMMER, PLZ) 
-      VALUES (adresse_sq.NEXTVAL, l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in)
+      VALUES (adresse_seq.NEXTVAL, l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in)
       RETURNING ADRESS_ID
       INTO l_i_adress_id_ou;
     EXCEPTION
