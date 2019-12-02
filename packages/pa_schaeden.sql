@@ -4,48 +4,47 @@ CREATE OR REPLACE PACKAGE pa_schaeden
 AS
   /*********************************************************************
   /**
-  /** Procedure: sp_get_schaeden_id
-  /** Out: l_i_schaeden_id - Schaden ID
+  /** Function: f_get_schaeden_id_i
   /** In: l_v_schaeden_in - Schaden Beschreibung
+  /** Returns: Schaden ID
   /** Developer: 
   /** Description: Returned Schaden ID
   /**
-  /**********************************************************************/
-  PROCEDURE sp_get_schaeden_id (l_v_schaeden_in IN VARCHAR2, l_i_schaeden_id_ou OUT INTEGER);
+  /*********************************************************************/
+  FUNCTION f_get_schaeden_id_i (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
   
   /*********************************************************************
   /**
-  /** Procedure: sp_get_schaeden_count
-  /** Out: l_bi_schaeden_count_ou - Gibt es den Schaden bereits in der Tabelle? (0 oder 1)
+  /** Function: f_get_schaeden_count_bi
   /** In: l_v_schaeden_in - Schaden Beschreibung
+  /** Returns: 0 oder 1
   /** Developer: 
-  /** Description: Checkt ob es den Schaden bereits gibt
+  /** Description: Gibt es den Schaden bereits in der Tabelle? (0 oder 1)
   /**
-  /**********************************************************************/
-  PROCEDURE sp_get_schaeden_count (l_v_schaeden_in IN VARCHAR2, l_bi_schaeden_count_ou OUT INTEGER);
+  /*********************************************************************/
+  FUNCTION f_get_schaeden_count_bi (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
 
   /*********************************************************************
   /**
-  /** Procedure: sp_insert_schaden
-  /** Out: l_i_schaeden_id_ou - Schaden ID
+  /** Function: f_insert_schaden_i
   /** In: l_v_schaeden_in -  Schaden Beschreibung
+  /** Returns: Schaden ID
   /** Developer: 
   /** Description: Speichert eine neue Schadensart in der Datenbank
   /**
-  /**********************************************************************/
-  PROCEDURE sp_insert_schaden (l_v_schaeden_in IN VARCHAR2, l_i_schaeden_id_ou OUT INTEGER);
+  /*********************************************************************/
+  FUNCTION f_insert_schaden_i (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
   
   /*********************************************************************
   /**
   /** Procedure: sp_insert_exemp_schaeden
-  /** Out: l_row_exemp_schaeden_ou - Damit man später prüfen kann ob das insert richtig ausgeführt wurde
   /** In: l_i_exemplar_id - Exemplar ID
   /** In: l_i_schaeden_id_in - Schaden ID
   /** Developer: 
   /** Description: Checkt ob die angegebene PLZ schon vorhanden ist
   /**
   /**********************************************************************/
-  PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER, l_row_exemp_schaeden_ou OUT ROWID);
+  PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER);
 END pa_schaeden;
 /
 
@@ -53,62 +52,72 @@ END pa_schaeden;
 --------------------------------------
 CREATE OR REPLACE PACKAGE BODY pa_schaeden
 AS
-  /* sp_get_schaeden_id_i definition *****************************************/
-  PROCEDURE sp_get_schaeden_id (l_v_schaeden_in IN VARCHAR2, l_i_schaeden_id_ou OUT INTEGER)
-   AS
+  /* f_get_schaeden_id_i definition *****************************************/
+  FUNCTION f_get_schaeden_id_i (l_v_schaeden_in IN VARCHAR2)
+  RETURN INTEGER
+  AS
+    l_i_schaeden_id INTEGER;
     BEGIN
       SELECT SCHAEDEN.SCHAEDEN_ID
-      INTO l_i_schaeden_id_ou
+      INTO l_i_schaeden_id
       FROM SCHAEDEN
       WHERE SCHAEDEN.BESCHREIBUNG = l_v_schaeden_in;
+      RETURN l_i_schaeden_id;
     EXCEPTION
       WHEN OTHERS THEN
-        l_i_schaeden_id_ou := -1;
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-    END sp_get_schaeden_id;
+        RETURN -1;
+        --RAISE;
+    END f_get_schaeden_id_i;
   /*************************************************************************/
-  /* sp_get_schaeden_count definition **************************************/
-  PROCEDURE sp_get_schaeden_count (l_v_schaeden_in IN VARCHAR2, l_bi_schaeden_count_ou OUT INTEGER)
+  /* f_get_schaeden_count_bi definition **************************************/
+  FUNCTION f_get_schaeden_count_bi (l_v_schaeden_in IN VARCHAR2)
+  RETURN INTEGER
   AS
+    l_bi_schaeden_count INTEGER;
     BEGIN
       SELECT COUNT(*)
-      INTO l_bi_schaeden_count_ou
+      INTO l_bi_schaeden_count
       FROM SCHAEDEN
       WHERE BESCHREIBUNG = l_v_schaeden_in;
+      RETURN l_bi_schaeden_count;
     EXCEPTION
       WHEN OTHERS THEN
-        l_bi_schaeden_count_ou := -1;
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-    END sp_get_schaeden_count;
+        RETURN -1;
+        --RAISE;
+    END f_get_schaeden_count_bi;
   /*************************************************************************/
   
   /* sp_insert_schaden definition ******************************************/
-  PROCEDURE sp_insert_schaden (l_v_schaeden_in IN VARCHAR2, l_i_schaeden_id_ou OUT INTEGER)
+  FUNCTION f_insert_schaden_i (l_v_schaeden_in IN VARCHAR2)
+  RETURN INTEGER
   AS
+    l_i_schaeden_id INTEGER;
     BEGIN
       INSERT INTO SCHAEDEN (SCHAEDEN_ID, BESCHREIBUNG)
       VALUES (schaden_seq.NEXTVAL, l_v_schaeden_in)
       RETURNING SCHAEDEN_ID
-      INTO l_i_schaeden_id_ou;
+      INTO l_i_schaeden_id;
+      RETURN l_i_schaeden_id;
     EXCEPTION
       WHEN OTHERS THEN
-        l_i_schaeden_id_ou := -1;
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-    END sp_insert_schaden;
+        RETURN -1;
+        --RAISE;
+    END f_insert_schaden_i;
   /*************************************************************************/
   
   /* sp_insert_exemp_schaeden_i definition **********************************/
-  PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER, l_row_exemp_schaeden_ou OUT ROWID)
+  PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER)
   AS
     BEGIN
       INSERT INTO EXEMP_SCHAEDEN (KOMBO_ID, SCHAEDEN_ID, EXEMPLAR_ID) 
-      VALUES (exemp_schaden_seq.NEXTVAL, l_i_schaeden_id_in, l_i_exemplar_id)
-      RETURNING ROWID
-      INTO l_row_exemp_schaeden_ou;
+      VALUES (exemp_schaden_seq.NEXTVAL, l_i_schaeden_id_in, l_i_exemplar_id);
     EXCEPTION
       WHEN OTHERS THEN
-        l_row_exemp_schaeden_ou := NULL;
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        RAISE;
     END sp_insert_exemp_schaeden;
   /*************************************************************************/
 END;
