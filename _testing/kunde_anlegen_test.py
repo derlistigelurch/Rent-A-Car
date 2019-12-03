@@ -3,7 +3,9 @@
 #myuser = "system"
 #mypwd = "oracle"
 #dsn_tns = cx_Oracle.makedsn('jdbc:oracle:thin:@192.168.8.103','1521',service_name='XE')
-# connection = cx_Oracle.connect(user=myuser, password=mypwd, dsn=dsn_tns) # jdbc:oracle:thin:@192.168.8.103:1521/XE
+#connection = cx_Oracle.connect(user=myuser, password=mypwd, dsn=dsn_tns) # jdbc:oracle:thin:@192.168.8.103:1521/XE
+
+from datetime import datetime
 import cx_Oracle
 
 con = cx_Oracle.connect('system/oracle@192.168.8.101/XE')
@@ -14,15 +16,25 @@ try:
     cursor.callproc("dbms_output.enable")
     vorname = str(input('vorname: '))
     nachname = str(input('Nachname: '))
+
     geb_datum = str(input('Geburtsdatum: '))
+    # convert to datetime object
+    datetime_object = datetime.strptime(geb_datum, '%d-%m-%Y').date()
+
     ortsname = str(input('Ortsname: '))
     strasse = str(input('Strasse: '))
     hausnummer = int(input('Hausnummer: '))
-    tuernummer = int(input('Türnummer: '))
+
+    # check value of tuernummer
+    tuernummer = input('Türnummer: ')
+    if tuernummer is not "":
+        tuernummer = int(tuernummer)
+
     plz = int(input('PLZ: '))
+
     # perform loop to fetch the text that was added by PL/SQL
     cursor.callproc('sp_kunde_anlegen', [
-                    plz, ortsname, strasse, hausnummer, tuernummer, vorname, nachname, geb_datum])
+                    plz, ortsname, strasse, hausnummer, tuernummer, vorname, nachname, datetime_object])
     textVar = cursor.var(str)
     statusVar = cursor.var(int)
     while True:

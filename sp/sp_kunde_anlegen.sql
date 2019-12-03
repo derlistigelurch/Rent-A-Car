@@ -20,7 +20,6 @@ AS
   l_v_adress_id INTEGER;
   l_i_person_id INTEGER;
   l_i_kunde_id INTEGER;
-  --l_v_output VARCHAR2(255);
 BEGIN
   COMMIT;
   -- Adresse einfügen
@@ -36,7 +35,7 @@ BEGIN
   l_v_adress_id := pa_adresse.f_insert_adresse_i(l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in);
   -- Person anlegen (Vorname, Nachname, AdressID)
   -- FUNCTION f_insert_person_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_d_gebdatum_in IN DATE, l_i_adress_id_in IN INTEGER)
-  l_i_person_id := pa_person.f_insert_person_i(l_v_vorname_in, l_v_nachname_in, SYSDATE, l_v_adress_id);
+  l_i_person_id := pa_person.f_insert_person_i(l_v_vorname_in, l_v_nachname_in, l_v_geb_datum_in, l_v_adress_id);
   -- Kunde anlegen (KundeID, PersonID)
   -- FUNCTION f_insert_kunde_i (l_i_person_id_in IN INTEGER)
   l_i_kunde_id := pa_kunde.f_insert_kunde_i(l_i_person_id);
@@ -50,6 +49,7 @@ BEGIN
       dbms_output.put_line('Die eingegebenen Daten haben das falsche Format!');
       ROLLBACK;
     WHEN OTHERS THEN
+      --pa_err.sp_err_handling(SQLCODE, SQLERRM);
       dbms_output.put_line(SQLERRM);
       ROLLBACK;
 END sp_kunde_anlegen;
