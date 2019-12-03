@@ -15,6 +15,15 @@ AS
   /**
   /*********************************************************************/
   FUNCTION f_insert_person_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_d_gebdatum_in IN DATE, l_i_adress_id_in IN INTEGER) RETURN INTEGER;
+  /*********************************************************************
+  /**
+  /** Procedure: sp_change_name
+  /** In: l_i_person_id - Person ID
+  /** Developer: 
+  /** Description: Ändert den Namen des Kunden
+  /**
+  /**********************************************************************/
+  PROCEDURE sp_change_name (l_i_person_id_in IN INTEGER, l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2);
 END pa_person;
 /
 
@@ -38,6 +47,21 @@ AS
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;
     END f_insert_person_i;
+  /*************************************************************************/
+  
+  /* sp_change_name definition *******************************************/
+  PROCEDURE sp_change_name (l_i_person_id_in IN INTEGER, l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2)
+  AS
+    BEGIN
+      UPDATE PERSON
+      SET VORNAME = l_v_vorname_in,
+          NACHNAME = l_v_nachname_in
+      WHERE PERSON_ID = l_i_person_id_in;
+    EXCEPTION
+      WHEN OTHERS THEN
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+      RAISE;
+    END sp_change_name; 
   /*************************************************************************/
 END;
 /
