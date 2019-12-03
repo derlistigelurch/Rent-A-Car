@@ -69,8 +69,7 @@ AS
         RETURN 0;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RETURN -1;
-        --RAISE;
+        RAISE;
     END f_get_exemplar_id_i;
   /*************************************************************************/
   
@@ -116,8 +115,7 @@ AS
     EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RETURN -1;
-        --RAISE;
+        RAISE;
     END f_verfuegbarkeit_pruefen;
   /*************************************************************************/  
 END;

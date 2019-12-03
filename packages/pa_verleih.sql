@@ -56,7 +56,7 @@ AS
            l_i_kosten_pro_tag,
            l_i_kosten_insgesamt,
            l_bi_bezahlt
-      FROM RECHNUNGEN_VIEW 
+      FROM RECHNUNGEN_VIEW
       WHERE KUNDE_ID = l_i_kunde_id_in
             AND BEZAHLT = 0;
     RETURN l_i_verleih_id || ',' || l_i_kunde_id || ',' || l_v_vorname || ',' || l_v_nachname || ',' || l_i_mitarbeiter_id || ',' || l_v_bezeichnung || ',' || l_v_modell_beschreibung || ',' || l_i_dauer || ',' || l_i_kosten_pro_tag || ',' || l_bi_bezahlt;

@@ -66,8 +66,7 @@ AS
     EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RETURN -1;
-        --RAISE;
+        RAISE;
     END f_get_schaeden_id_i;
   /*************************************************************************/
   /* f_get_schaeden_count_bi definition **************************************/
@@ -84,8 +83,7 @@ AS
     EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RETURN -1;
-        --RAISE;
+        RAISE;
     END f_get_schaeden_count_bi;
   /*************************************************************************/
   
@@ -103,8 +101,7 @@ AS
     EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RETURN -1;
-        --RAISE;
+        RAISE;
     END f_insert_schaden_i;
   /*************************************************************************/
   

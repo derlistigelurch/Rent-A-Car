@@ -36,8 +36,7 @@ AS
     EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RETURN -1;
-        --RAISE;
+        RAISE;
     END f_insert_person_i;
   /*************************************************************************/
 END;
