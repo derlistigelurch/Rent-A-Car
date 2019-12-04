@@ -1,10 +1,3 @@
-#import cx_Oracle
-
-#myuser = "system"
-#mypwd = "oracle"
-#dsn_tns = cx_Oracle.makedsn('jdbc:oracle:thin:@192.168.8.103','1521',service_name='XE')
-#connection = cx_Oracle.connect(user=myuser, password=mypwd, dsn=dsn_tns) # jdbc:oracle:thin:@192.168.8.103:1521/XE
-
 from datetime import datetime
 import cx_Oracle
 
@@ -14,7 +7,7 @@ cursor = con.cursor()
 try:
     # enable DBMS_OUTPUT
     cursor.callproc("dbms_output.enable")
-    vorname = str(input('vorname: '))
+    vorname = str(input('Vorname: '))
     nachname = str(input('Nachname: '))
 
     geb_datum = str(input('Geburtsdatum: '))
