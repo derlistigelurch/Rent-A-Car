@@ -12,7 +12,7 @@ AS
   /**
   /*********************************************************************/
   FUNCTION f_get_plz_count_bi (l_i_plz_in IN INTEGER) RETURN INTEGER;
-  
+
   /*********************************************************************
   /**
   /** Procedure: sp_insert_plz
@@ -24,6 +24,35 @@ AS
   /**********************************************************************/
   PROCEDURE sp_insert_plz (l_i_plz_in IN INTEGER, l_v_ortsname_in IN VARCHAR2);
   
+
+  /*********************************************************************
+  /**
+  /** Function: f_get_adress_count_bi
+  /** In: l_v_strasse_in - Strasse
+  /** In: l_i_hausnr_in - Hausnummer
+  /** In: l_i_tuernr_in - Türnummer
+  /** In: l_i_plz_in - Postleitzahl
+  /** Returns: Anzahl der gefundenen Adressen (0 oder 1)
+  /** Developer: 
+  /** Description: Checkt ob die angegebene Adresse schon vorhanden ist
+  /**
+  /*********************************************************************/
+  FUNCTION f_get_adress_count_bi (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) RETURN INTEGER;
+  
+  /*********************************************************************
+  /**
+  /** Function: f_get_address_id_i
+  /** In: l_v_strasse_in - Strasse
+  /** In: l_i_hausnr_in - Hausnummer
+  /** In: l_i_tuernr_in - Türnummer
+  /** In: l_i_plz_in - Postleitzahl
+  /** Returns: Adress ID
+  /** Developer: 
+  /** Description: Gibt die ID der angegebenen Adresse zurück
+  /**
+  /*********************************************************************/
+  FUNCTION f_get_address_id_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) RETURN INTEGER;
+
   /*********************************************************************
   /**
   /** Function: f_insert_adresse_i
@@ -74,7 +103,48 @@ AS
         RAISE;
     END sp_insert_plz;
   /*************************************************************************/
-  
+
+  /* f_get_adress_count_bi definition **********************************************/
+  FUNCTION f_get_adress_count_bi (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER)
+  RETURN INTEGER
+  AS
+    l_bi_adress_count INTEGER;
+    BEGIN
+      SELECT COUNT(*)
+      INTO l_bi_adress_count
+      FROM POSTLEITZAHL
+      WHERE PLZ = l_i_plz_in;
+      RETURN l_bi_adress_count;
+      EXCEPTION
+      WHEN OTHERS THEN
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        RAISE;
+    END f_get_adress_count_bi;
+  /*************************************************************************/
+
+  /* f_get_address_id_i definition **********************************************/
+  FUNCTION f_get_address_id_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) 
+  RETURN INTEGER
+  AS
+    l_i_adress_id INTEGER;
+    BEGIN
+      SELECT ADRESS_ID
+      INTO l_i_adress_id
+      FROM ADRESSE
+      WHERE STRASSE = l_v_strasse_in
+            AND HAUSNUMMER = l_i_hausnr_in
+            AND TUERNUMMER = l_i_tuernr_in
+            AND PLZ = l_i_plz_in;
+      EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          RETURN 0;
+          --RAISE NO_DATA_FOUND
+        WHEN OTHERS THEN
+          pa_err.sp_err_handling(SQLCODE, SQLERRM);
+          RAISE;
+    END f_get_address_id_i;
+  /*************************************************************************/
+
   /* f_insert_adresse_i definition ******************************************/
   FUNCTION f_insert_adresse_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER)
   RETURN INTEGER
@@ -95,4 +165,3 @@ AS
 END;
 /
 COMMIT;
-
