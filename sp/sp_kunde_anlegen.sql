@@ -2,7 +2,7 @@
 /*
  *  1. Adresse einfügen
  *    1.1 PLZ bereits vorhanden? Wenn nicht, dann einfügen (PLZ, Ortsname)
- *    1.2 Adresse einfügen (Strasse, Hausnummer, Türnummer)
+ *    1.2 Adresse bereits vorhanden? Wenn nicht Adresse einfügen (Strasse, Hausnummer, Türnummer)
  *  2. Person anlegen (Vorname, Nachname, AdressID)
  *  3. Kunde anlegen (KundeID, PersonID)
  */
@@ -30,9 +30,14 @@ BEGIN
     -- PROCEDURE sp_insert_plz (l_i_plz_in IN INTEGER, l_v_ortsname_in IN VARCHAR2)
     pa_adresse.sp_insert_plz(l_i_plz_in, l_v_ortsname_in);
   END IF;
-  -- Adresse einfügen (Strasse, Hausnummer, Türnummer)
-  -- FUNCTION f_insert_adresse_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER)
-  l_v_adress_id := pa_adresse.f_insert_adresse_i(l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in);
+  -- Adresse bereits vorhanden? Wenn nicht Adresse einfügen (Strasse, Hausnummer, Türnummer)
+  IF pa_adresse.f_get_adress_count_bi(l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in) < 1
+  THEN  
+    -- FUNCTION f_insert_adresse_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER)
+    l_v_adress_id := pa_adresse.f_insert_adresse_i(l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in);
+  ELSE
+    l_v_adress_id := pa_adresse.f_get_adress_id_i(l_v_strasse_in, l_i_hausnr_in, l_i_tuernr_in, l_i_plz_in);
+  END IF;
   -- Person anlegen (Vorname, Nachname, AdressID)
   -- FUNCTION f_insert_person_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_d_gebdatum_in IN DATE, l_i_adress_id_in IN INTEGER)
   l_i_person_id := pa_person.f_insert_person_i(l_v_vorname_in, l_v_nachname_in, l_v_geb_datum_in, l_v_adress_id);

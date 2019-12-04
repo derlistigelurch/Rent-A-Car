@@ -142,13 +142,24 @@ AS
   AS
     l_i_adress_id INTEGER;
     BEGIN
-      SELECT ADRESS_ID
-      INTO l_i_adress_id
-      FROM ADRESSE
-      WHERE STRASSE = l_v_strasse_in
-            AND HAUSNUMMER = l_i_hausnr_in
-            AND TUERNUMMER = l_i_tuernr_in
-            AND PLZ = l_i_plz_in;
+      IF l_i_tuernr_in IS NULL
+      THEN
+        SELECT ADRESS_ID
+        INTO l_i_adress_id
+        FROM ADRESSE
+        WHERE STRASSE = l_v_strasse_in
+              AND HAUSNUMMER = l_i_hausnr_in
+              AND TUERNUMMER IS NULL
+              AND PLZ = l_i_plz_in;
+      ELSE
+        SELECT ADRESS_ID
+        INTO l_i_adress_id
+        FROM ADRESSE
+        WHERE STRASSE = l_v_strasse_in
+              AND HAUSNUMMER = l_i_hausnr_in
+              AND TUERNUMMER = l_i_tuernr_in
+              AND PLZ = l_i_plz_in;
+      END IF;
       RETURN l_i_adress_id;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
