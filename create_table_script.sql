@@ -1,9 +1,23 @@
+/*********************************************************************
+/**
+/** Table: HERSTELLER
+/** Developer:
+/** Description: Herstellerdaten
+/**
+/*********************************************************************/
 CREATE TABLE HERSTELLER
 (	
 	HERSTELLER_ID NUMBER PRIMARY KEY,
 	BEZEICHNUNG VARCHAR2(20) NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: VERLEIH
+/** Developer:
+/** Description: Rechnungsdaten
+/**
+/*********************************************************************/
 CREATE TABLE VERLEIH
 (	
 	VERLEIH_ID NUMBER PRIMARY KEY,
@@ -15,6 +29,13 @@ CREATE TABLE VERLEIH
 	MITARBEITER_ID NUMBER
 );
 
+/*********************************************************************
+/**
+/** Table: EXEMPLAR
+/** Developer:
+/** Description: Speichert Daten zu einzelnen zu verleihenden Exemplaren
+/**
+/*********************************************************************/
 CREATE TABLE EXEMPLAR
 (	
 	EXEMPLAR_ID NUMBER PRIMARY KEY,
@@ -27,6 +48,13 @@ CREATE TABLE EXEMPLAR
 	AUTO_DETAILS_ID NUMBER
 );
 
+/*********************************************************************
+/**
+/** Table: EXEMP_SCHAEDEN
+/** Developer:
+/** Description: Fahrzeugen werden Schadensnummern zugewiesen (<-- m:n)
+/**
+/*********************************************************************/
 CREATE TABLE EXEMP_SCHAEDEN
 (	
 	KOMBO_ID NUMBER PRIMARY KEY,
@@ -34,24 +62,52 @@ CREATE TABLE EXEMP_SCHAEDEN
 	EXEMPLAR_ID NUMBER NOT NULL	
 );
 
+/*********************************************************************
+/**
+/** Table: SCHAEDEN
+/** Developer:
+/** Description: Beschreibungen der Schaeden (Motorschaden, ...)
+/**
+/*********************************************************************/
 CREATE TABLE SCHAEDEN
 (	
 	SCHAEDEN_ID NUMBER PRIMARY KEY,
 	BESCHREIBUNG VARCHAR2(200) NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: STATUS
+/** Developer:
+/** Description: Statusbeschreibungen der Autos (im Haus, verliehen, kaputt, ...)
+/**
+/*********************************************************************/
 CREATE TABLE STATUS
 (	
 	STATUS_ID NUMBER PRIMARY KEY,
 	BESCHREIBUNG VARCHAR2(200) NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: PREISLISTE
+/** Developer:
+/** Description: Preis/Tag
+/**
+/*********************************************************************/
 CREATE TABLE PREISLISTE
 (	
 	PREIS_ID NUMBER PRIMARY KEY,
 	KOSTEN_PRO_TAG NUMBER(7,2) NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: AUTO_DETAILS
+/** Developer:
+/** Description: Beinhaltet allgemeine Details zu einem Auto
+/**
+/*********************************************************************/
 CREATE TABLE AUTO_DETAILS
 (	
 	DETAIL_ID NUMBER PRIMARY KEY,
@@ -62,6 +118,14 @@ CREATE TABLE AUTO_DETAILS
 	PREIS_ID NUMBER NOT NULL,
 	HERSTELLER_ID NUMBER NOT NULL
 );
+
+/*********************************************************************
+/**
+/** Table: PERSON
+/** Developer:
+/** Description: Daten zur Person (Name, Geburtsdatum usw.)
+/**
+/*********************************************************************/
 CREATE TABLE PERSON
 (
 	PERSON_ID NUMBER PRIMARY KEY,
@@ -71,6 +135,13 @@ CREATE TABLE PERSON
 	ADRESS_ID NUMBER NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: MITARBEITER
+/** Developer:
+/** Description: Mitarbeiterdaten
+/**
+/*********************************************************************/
 CREATE TABLE MITARBEITER
 (	
 	MITARBEITER_ID NUMBER PRIMARY KEY,
@@ -78,12 +149,26 @@ CREATE TABLE MITARBEITER
 	STANDORT_ID NUMBER NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: KUNDE
+/** Developer:
+/** Description: Kundennummer, Referenz auf die Personentabelle
+/**
+/*********************************************************************/
 CREATE TABLE KUNDE
 (	
 	KUNDE_ID NUMBER PRIMARY KEY,
 	PERSON_ID NUMBER NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: ADRESSE
+/** Developer:
+/** Description: Strasse, Hausnummer usw.
+/**
+/*********************************************************************/
 CREATE TABLE ADRESSE
 (	
 	ADRESS_ID NUMBER PRIMARY KEY,
@@ -93,6 +178,13 @@ CREATE TABLE ADRESSE
 	PLZ NUMBER NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: STANDORT
+/** Developer:
+/** Description: Standortinformationen
+/**
+/*********************************************************************/
 CREATE TABLE STANDORT
 (	
 	STANDORT_ID NUMBER PRIMARY KEY,
@@ -100,12 +192,26 @@ CREATE TABLE STANDORT
 	ADRESS_ID NUMBER NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: POSTLEITZAHL
+/** Developer:
+/** Description: PLZ und Ortsnamen
+/**
+/*********************************************************************/
 CREATE TABLE POSTLEITZAHL
 (	
 	PLZ NUMBER PRIMARY KEY,
 	ORTSNAME VARCHAR(30) NOT NULL
 );
 
+/*********************************************************************
+/**
+/** Table: ERR_TABLE
+/** Developer:
+/** Description: Error logging
+/**
+/*********************************************************************/
 CREATE TABLE ERR_TABLE
 (
 	ERR_ID NUMBER PRIMARY KEY,
