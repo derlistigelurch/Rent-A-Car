@@ -41,7 +41,7 @@ AS
   
   /*********************************************************************
   /**
-  /** Function: f_get_address_id_i
+  /** Function: f_get_adress_id_i
   /** In: l_v_strasse_in - Strasse
   /** In: l_i_hausnr_in - Hausnummer
   /** In: l_i_tuernr_in - Türnummer
@@ -51,7 +51,7 @@ AS
   /** Description: Gibt die ID der angegebenen Adresse zurück
   /**
   /*********************************************************************/
-  FUNCTION f_get_address_id_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) RETURN INTEGER;
+  FUNCTION f_get_adress_id_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) RETURN INTEGER;
 
   /*********************************************************************
   /**
@@ -110,20 +110,34 @@ AS
   AS
     l_bi_adress_count INTEGER;
     BEGIN
-      SELECT COUNT(*)
-      INTO l_bi_adress_count
-      FROM POSTLEITZAHL
-      WHERE PLZ = l_i_plz_in;
+      IF l_i_tuernr_in IS NULL
+      THEN
+        SELECT COUNT(*)
+        INTO l_bi_adress_count
+        FROM ADRESSE
+        WHERE STRASSE = l_v_strasse_in
+              AND HAUSNUMMER = l_i_hausnr_in
+              AND TUERNUMMER IS NULL
+              AND PLZ = l_i_plz_in;
+      ELSE
+        SELECT COUNT(*)
+        INTO l_bi_adress_count
+        FROM ADRESSE
+        WHERE STRASSE = l_v_strasse_in
+              AND HAUSNUMMER = l_i_hausnr_in
+              AND TUERNUMMER = l_i_tuernr_in
+              AND PLZ = l_i_plz_in;
+      END IF;
       RETURN l_bi_adress_count;
-      EXCEPTION
+    EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;
     END f_get_adress_count_bi;
   /*************************************************************************/
 
-  /* f_get_address_id_i definition **********************************************/
-  FUNCTION f_get_address_id_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) 
+  /* f_get_adress_id_i definition **********************************************/
+  FUNCTION f_get_adress_id_i (l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER DEFAULT NULL, l_i_plz_in IN INTEGER) 
   RETURN INTEGER
   AS
     l_i_adress_id INTEGER;
@@ -135,6 +149,7 @@ AS
             AND HAUSNUMMER = l_i_hausnr_in
             AND TUERNUMMER = l_i_tuernr_in
             AND PLZ = l_i_plz_in;
+      RETURN l_i_adress_id;
       EXCEPTION
         WHEN NO_DATA_FOUND THEN
           RETURN 0;
@@ -142,7 +157,7 @@ AS
         WHEN OTHERS THEN
           pa_err.sp_err_handling(SQLCODE, SQLERRM);
           RAISE;
-    END f_get_address_id_i;
+    END f_get_adress_id_i;
   /*************************************************************************/
 
   /* f_insert_adresse_i definition ******************************************/
