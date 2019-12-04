@@ -56,8 +56,7 @@ AS
       RETURN l_i_kunde_id;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
-        RETURN 0;
-        --RAISE NO_DATA_FOUND;
+        RAISE NO_DATA_FOUND;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;
