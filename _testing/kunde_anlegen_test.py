@@ -26,10 +26,11 @@ try:
     plz = int(input('PLZ: '))
 
     # perform loop to fetch the text that was added by PL/SQL
-    cursor.callproc('sp_kunde_anlegen', [
+    cursor.callproc('pa_kunde.sp_kunde_anlegen', [
                     plz, ortsname, strasse, hausnummer, tuernummer, vorname, nachname, datetime_object])
     textVar = cursor.var(str)
     statusVar = cursor.var(int)
+
     while True:
         cursor.callproc("dbms_output.get_line", (textVar, statusVar))
         if statusVar.getvalue() is not 0:

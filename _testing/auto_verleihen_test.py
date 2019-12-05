@@ -9,7 +9,7 @@ try:
     # enable DBMS_OUTPUT
     cursor.callproc("dbms_output.enable")
     count = cursor.var(int)
-    cursor.callproc('sp_autos_anzeigen', [count])
+    cursor.callproc('pa_verleih.sp_autos_anzeigen', [count])
 
     textVar = cursor.var(str)
     statusVar = cursor.var(int)
@@ -34,10 +34,9 @@ try:
         datetime_verliehen_bis = datetime.strptime(
             verliehen_bis, '%d-%m-%Y').date()
 
-        cursor.callproc('sp_auto_verleihen', [
+        cursor.callproc('pa_verleih.sp_auto_verleihen', [
                         vorname, nachname, exemplar_id, datetime_verliehen_von, datetime_verliehen_bis])
 
-        
         while True:
             cursor.callproc("dbms_output.get_line", (textVar, statusVar))
             if statusVar.getvalue() is not 0:
