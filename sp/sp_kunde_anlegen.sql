@@ -50,10 +50,14 @@ BEGIN
   COMMIT;
   EXCEPTION
     WHEN VALUE_ERROR THEN
-      dbms_output.put_line('Die eingegebenen Daten haben das falsche Format!');
+      DBMS_OUTPUT.PUT_LINE('Die eingegebenen Daten haben das falsche Format!');
       ROLLBACK;
     WHEN INVALID_NUMBER THEN
-      dbms_output.put_line('Die eingegebenen Daten haben das falsche Format!');
+      DBMS_OUTPUT.PUT_LINE('Die eingegebenen Daten haben das falsche Format!');
+      ROLLBACK;
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Die Adresse konnte nicht gefunden werden!');
+      DBMS_OUTPUT.PUT_LINE('Wahrscheinlich gab es einen Fehler beim speichern der Daten!');
       ROLLBACK;
     WHEN OTHERS THEN
       --pa_err.sp_err_handling(SQLCODE, SQLERRM);

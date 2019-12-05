@@ -67,6 +67,7 @@ AS
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
         RETURN 0;
+        --RAISE
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;

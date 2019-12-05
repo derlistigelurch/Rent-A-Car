@@ -20,6 +20,7 @@ AS
   /* sp_err_handling definition *******************************************/
   PROCEDURE sp_err_handling (i_n_err_code IN NUMBER, i_v_err_msg IN VARCHAR2)
   AS
+    PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
       INSERT INTO ERR_TABLE (ERR_ID, ERR_CODE, ERR_MSG) 
       VALUES (err_table_seq.NEXTVAL, i_n_err_code, i_v_err_msg);

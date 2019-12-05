@@ -12,6 +12,20 @@ AS
   /**
   /*********************************************************************/
   FUNCTION f_get_rechnung_v (l_i_kunde_id_in IN INTEGER) RETURN VARCHAR2;
+  
+  /*********************************************************************
+  /**
+  /** Procedure: sp_insert_exemplar
+  /** In: l_i_exemplar_id_in - Exemplar ID
+  /** In: l_i_kunde_id_in - ID des Kunden
+  /** In: l_d_verliehen_ab_in - Zeitpunkt ab dem das Auto verliehen wird
+  /** In: l_d_verliehen_bis_in - Zeitpunkt an dem das Auto zurückgegben wird
+  /** In: l_i_mitarbeiter_id_in - Mitarbeiter ID
+  /** Developer: 
+  /** Description: Auto verleihen
+  /**
+  /**********************************************************************/
+  PROCEDURE sp_insert_exemplar (l_i_exemplar_id_in IN INTEGER, l_i_kunde_id_in IN INTEGER, l_d_verliehen_ab_in IN DATE, l_d_verliehen_bis_in IN DATE, l_i_mitarbeiter_id_in IN INTEGER);
 END pa_verleih;
 /
 
@@ -67,6 +81,21 @@ AS
         RAISE;
     END f_get_rechnung_v;
   /*************************************************************************/
+  /* sp_insert_exemplar definition *******************************************/
+  PROCEDURE sp_insert_exemplar (l_i_exemplar_id_in IN INTEGER, l_i_kunde_id_in IN INTEGER, l_d_verliehen_ab_in IN DATE, l_d_verliehen_bis_in IN DATE, l_i_mitarbeiter_id_in IN INTEGER)
+  AS
+    l_i_nicht_retourniert INTEGER := 0;
+    
+    BEGIN
+      INSERT INTO VERLEIH (VERLEIH_ID, EXEMPLAR_ID, KUNDE_ID, VERLIEHEN_AB, VERLIEHEN_BIS, RETOURNIERT, MITARBEITER_ID) 
+      VALUES (verleih_seq.NEXTVAL, l_i_exemplar_id_in, l_i_kunde_id_in, l_d_verliehen_ab_in, l_d_verliehen_bis_in, l_i_nicht_retourniert, l_i_mitarbeiter_id_in);
+    EXCEPTION
+      WHEN OTHERS THEN
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        RAISE;
+    END sp_insert_exemplar;
+  /*************************************************************************/
 END;
 /
+
 COMMIT;

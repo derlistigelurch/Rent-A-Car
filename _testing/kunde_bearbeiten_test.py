@@ -39,12 +39,15 @@ try:
     statusVar = cursor.var(int)
     while True:
         cursor.callproc("dbms_output.get_line", (textVar, statusVar))
-        if statusVar.getvalue() != 0:
+        if statusVar.getvalue() is not 0:
             break
         print(textVar.getvalue())
 
 except ValueError:
     print('Daten haben das falsche Format!')
+
+except KeyboardInterrupt:
+    print('\n\nVorgang wird abgebrochen...')
 
 finally:
     con.close()

@@ -4,30 +4,27 @@ import cx_Oracle
 con = cx_Oracle.connect('system/oracle@192.168.8.101/XE')
 print(con.version)
 cursor = con.cursor()
+
 try:
     # enable DBMS_OUTPUT
     cursor.callproc("dbms_output.enable")
     vorname = str(input('Vorname: '))
     nachname = str(input('Nachname: '))
+    exemplar_id = int(input('Exemplar ID: '))
 
-    geb_datum = str(input('Geburtsdatum: '))
+    verliehen_von = str(input('Verliehen von: '))
     # convert to datetime object
-    datetime_object = datetime.strptime(geb_datum, '%d-%m-%Y').date()
+    datetime_verliehen_von = datetime.strptime(
+        verliehen_von, '%d-%m-%Y').date()
 
-    ortsname = str(input('Ortsname: '))
-    strasse = str(input('Strasse: '))
-    hausnummer = int(input('Hausnummer: '))
+    verliehen_bis = str(input('Verliehen bis: '))
+    # convert to datetime object
+    datetime_verliehen_bis = datetime.strptime(
+        verliehen_bis, '%d-%m-%Y').date()
 
-    # check value of tuernummer
-    tuernummer = input('Türnummer: ')
-    if tuernummer is not "":
-        tuernummer = int(tuernummer)
+    cursor.callproc('sp_auto_verleihen', [
+                    vorname, nachname, exemplar_id, datetime_verliehen_von, datetime_verliehen_bis])
 
-    plz = int(input('PLZ: '))
-
-    # perform loop to fetch the text that was added by PL/SQL
-    cursor.callproc('sp_kunde_anlegen', [
-                    plz, ortsname, strasse, hausnummer, tuernummer, vorname, nachname, datetime_object])
     textVar = cursor.var(str)
     statusVar = cursor.var(int)
     while True:

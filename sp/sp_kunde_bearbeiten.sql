@@ -6,7 +6,7 @@
  *    2.2 Bei Adressänderung muss ggf. auf die PLZ Tabelle angepasst werden
  *      2.2.1 Neue PLZ bereits vorhanden? Wenn nicht, dann einfügen (PLZ, Ortsname) 
  *      2.2.2 Adresse bereits vorhanden? Wenn nicht Adresse einfügen (Strasse, Hausnummer, Türnummer)
- */
+*/
 SET SERVEROUTPUT ON;
 /
 -- Adresse bearbeiten

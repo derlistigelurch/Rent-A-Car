@@ -20,11 +20,11 @@ AS
     --COMMIT;
   EXCEPTION
     WHEN NO_DATA_FOUND THEN
-      DBMS_OUTPUT.PUT_LINE('Kunde exisitiert nicht oder hat keine offene Rechnung!');
-      --ROLLBACK;   
+      DBMS_OUTPUT.PUT_LINE('Kunde exisitiert nicht, oder hat keine offene Rechnung!');
+      ROLLBACK;   
     WHEN OTHERS THEN
       DBMS_OUTPUT.PUT_LINE(SQLERRM);
-      --ROLLBACK;
+      ROLLBACK;
 END sp_rechnung_anzeigen;
 /
 
