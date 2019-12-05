@@ -6,9 +6,40 @@
  * 2. STATUS_ID in Exemplar Tabelle auf 1 (Verliehen) setzen
  * 3. In Verleih Tabelle EXEMPLAR_ID, KUNDE_ID, VERLEIHEN_AB, VERLEIHEN_BIS, RETOURNIERT = 0 und MITARBEITER_ID einfügen
  */
+
+-- Verfügbare Autos anzeigen
 SET SERVEROUTPUT ON;
 /
- CREATE OR REPLACE PROCEDURE sp_auto_verleihen(l_v_vorname_in  IN VARCHAR2,
+CREATE OR REPLACE PROCEDURE sp_autos_anzeigen(l_i_car_count_ou OUT INTEGER)
+AS
+  CURSOR car_cur IS SELECT * FROM AUTOS_HAUPTSTANDORT_VIEW;
+  x_no_cars_available EXCEPTION;
+  BEGIN
+    SELECT COUNT(*) 
+    INTO l_i_car_count_ou
+    FROM AUTOS_HAUPTSTANDORT_VIEW;
+    
+    IF l_i_car_count_ou > 0
+    THEN
+      FOR l_v_result_cv IN car_cur
+      LOOP
+        DBMS_OUTPUT.PUT_LINE('| ' || l_v_result_cv.EXEMPLAR_ID || ' ' || l_v_result_cv.BEZEICHNUNG || ' ' || l_v_result_cv.MODELL_BESCHREIBUNG || ' ' || l_v_result_cv.PS || ' ' || l_v_result_cv.VERBRAUCH);
+      END LOOP;
+    ELSE
+      RAISE x_no_cars_available;
+    END IF;
+  EXCEPTION
+    WHEN x_no_cars_available THEN
+      DBMS_OUTPUT.PUT_LINE('Keine Fahrzeuge verfügbar!');
+      ROLLBACK;
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+      ROLLBACK;
+END sp_autos_anzeigen;
+/
+
+-- Auto verleihen
+CREATE OR REPLACE PROCEDURE sp_auto_verleihen(l_v_vorname_in  IN VARCHAR2,
                                                l_v_nachname_in IN VARCHAR2,
                                                l_i_exemplar_id IN INTEGER,
                                                l_d_verliehen_von IN VARCHAR2,
