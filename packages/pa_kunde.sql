@@ -48,19 +48,19 @@ AS
   /** In: l_v_nachname_in - Nachname
   /** In: l_v_geb_datum_in - Geburtsdatum
   /** Developer: 
-  /** Description: Checkt ob die angegebene PLZ schon vorhanden ist
+  /** Description: legt einen neuen Kunden an
   /**
   /**********************************************************************/
   PROCEDURE sp_kunde_anlegen(l_i_plz_in IN INTEGER, l_v_ortsname_in IN VARCHAR2, l_v_strasse_in IN VARCHAR2, l_i_hausnr_in IN INTEGER, l_i_tuernr_in IN INTEGER, l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_v_geb_datum_in IN VARCHAR2);
   
   /*********************************************************************
   /**
-  /** Procedure: sp_kunde_anlegen
+  /** Procedure: sp_name_bearbeiten
   /** In: l_i_kunde_id_in - ID des Kunden
   /** In: l_v_vorname_neu_in - neuer Vorname
   /** In: l_v_nachanme_neu_in - neuer Nachname
   /** Developer: 
-  /** Description: Checkt ob die angegebene PLZ schon vorhanden ist
+  /** Description: Name eines Kunden bearbeiten
   /**
   /**********************************************************************/
   PROCEDURE sp_name_bearbeiten(l_i_kunde_id_in IN INTEGER, l_v_vorname_neu_in IN VARCHAR2, l_v_nachanme_neu_in IN VARCHAR2);
@@ -72,7 +72,7 @@ AS
   /** In: l_v_vorname_in - Vorname
   /** In: l_v_nachname_in - Nachname
   /** Developer: 
-  /** Description: Alle Autos verfügbaren anzeigen
+  /** Description: Alle Kunden mit passendem Vorname, Nachnamen anzeigen
   /**
   /**********************************************************************/
   PROCEDURE sp_kunden_anzeigen(l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2, l_i_kunde_count_ou OUT INTEGER);

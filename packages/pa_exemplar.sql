@@ -5,14 +5,13 @@ AS
   /*********************************************************************
   /**
   /** Function: f_get_exemplar_id_i
-  /** In: l_v_hersteller_in - Hersteller des Exemplares (Opel)
-  /** In: l_v_modell_in - Modellbezeichnung (Astra)
+  /** In: l_i_kunde_id_in - ID des Kunden
   /** Returns: Exemplar ID
   /** Developer: 
   /** Description: Ausgabe der Exemplar ID
   /**
   /*********************************************************************/
-  FUNCTION f_get_exemplar_id_i (l_v_hersteller_in IN VARCHAR2, l_v_modell_in IN VARCHAR2) RETURN INTEGER;
+  FUNCTION f_get_exemplar_id_i (l_i_kunde_id_in IN INTEGER) RETURN INTEGER;
   
   /*********************************************************************
   /**
@@ -35,6 +34,16 @@ AS
   /**
   /**********************************************************************/
   PROCEDURE sp_update_schaden (l_i_exemplar_id_in IN INTEGER, l_i_schaden_id_in IN INTEGER);
+
+  /*********************************************************************
+  /**
+  /** Procedure: sp_auto_retournieren
+  /** In: l_i_exemplar_id_in - Exemplar ID
+  /** Developer: 
+  /** Description: Änder den retourniert Status auf 1
+  /**
+  /**********************************************************************/
+  PROCEDURE sp_auto_retournieren (l_i_exemplar_id_in IN INTEGER);
   
   /*********************************************************************
   /**
@@ -54,20 +63,20 @@ END pa_exemplar;
 CREATE OR REPLACE PACKAGE BODY pa_exemplar
 AS
   /* f_get_exemplar_id_i definition *****************************************/
-  FUNCTION f_get_exemplar_id_i (l_v_hersteller_in IN VARCHAR2, l_v_modell_in IN VARCHAR2) 
+  FUNCTION f_get_exemplar_id_i (l_i_kunde_id_in IN INTEGER)
   RETURN INTEGER
   AS
     l_i_exemplar_id INTEGER;
     BEGIN
       SELECT EXEMPLAR_ID
       INTO l_i_exemplar_id
-      FROM verfuegbare_autos_view
-      WHERE BEZEICHNUNG = l_v_hersteller_in 
-            AND MODELL_BESCHREIBUNG = l_v_modell_in;
+      FROM rechnungen_view
+      WHERE KUNDE_ID = l_i_kunde_id_in
+            AND BEZAHLT = 0;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
-        RETURN 0;
-        --RAISE
+        --RETURN 0;
+        RAISE;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;
@@ -118,7 +127,18 @@ AS
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;
     END f_verfuegbarkeit_pruefen;
-  /*************************************************************************/  
+  /*************************************************************************/
+  
+  /* sp_auto_retournieren definition ***********************************/
+  PROCEDURE sp_auto_retournieren (l_i_exemplar_id_in IN INTEGER)
+  AS
+    l_i_retourniert INTEGER := 1;
+    BEGIN
+      UPDATE VERLEIH
+      SET RETOURNIERT = l_i_retourniert
+      WHERE EXEMPLAR_ID = l_i_exemplar_id_in;
+    END sp_auto_retournieren;
+  /*************************************************************************/
 END;
 /
 

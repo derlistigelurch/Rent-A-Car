@@ -1,6 +1,10 @@
 import cx_Oracle
+import json
+with open('config/config.json') as config_file:
+    config = json.load(config_file)
 
-con = cx_Oracle.connect('system/oracle@192.168.8.101/XE')
+connection_string = config['username'] + '/' + config['password'] + '@' + config['ip_address'] + '/' + config['service']
+con = cx_Oracle.connect(connection_string)
 print(con.version)
 cursor = con.cursor()
 

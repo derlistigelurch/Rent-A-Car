@@ -62,6 +62,18 @@ AS
   /**
   /**********************************************************************/
   PROCEDURE sp_rechnung_anzeigen(l_i_kunde_id_in IN INTEGER, l_v_rechnung_ou OUT VARCHAR2);
+  
+  /*********************************************************************
+  /**
+  /** Procedure: sp_auto_zurueckgeben
+  /** IN: l_i_kunde_id_in - ID des Kunden
+  /** IN: l_bi_schaeden_in - 1 wenn es Schäden gibt, ansonsten etwas anderes
+  /** IN: l_v_bezeichnung_in - Bezeichnung des Schadens
+  /** Developer: 
+  /** Description: Auto zurückgeben
+  /**
+  /**********************************************************************/
+  PROCEDURE sp_auto_zurueckgeben(l_i_kunde_id_in IN INTEGER, l_bi_schaeden_in IN INTEGER DEFAULT 0, l_v_bezeichnung_in IN VARCHAR2 DEFAULT NULL);
 END pa_verleih;
 /
 
@@ -107,7 +119,7 @@ AS
            l_bi_bezahlt
       FROM RECHNUNGEN_VIEW
       WHERE KUNDE_ID = l_i_kunde_id_in
-            AND BEZAHLT = 0;
+            AND BEZAHLT = 1;
     RETURN l_i_verleih_id || ',' || l_i_kunde_id || ',' || l_v_vorname || ',' || l_v_nachname || ',' || l_i_mitarbeiter_id || ',' || l_v_bezeichnung || ',' || l_v_modell_beschreibung || ',' || l_i_dauer || ',' || l_i_kosten_pro_tag || ',' || l_i_kosten_insgesamt || ',' || l_bi_bezahlt;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
@@ -207,12 +219,55 @@ AS
       l_v_rechnung_ou := pa_verleih.f_get_rechnung_v(l_i_kunde_id_in);
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Für diesen Kunden gibt es keine offene Rechnung!');
+        DBMS_OUTPUT.PUT_LINE('Für diesen Kunden gibt es keine Rechnung!');
         ROLLBACK;   
       WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
         ROLLBACK;
   END sp_rechnung_anzeigen;
+  /*************************************************************************/
+  
+  /* sp_auto_zurueckgeben definition ******************************************/
+  PROCEDURE sp_auto_zurueckgeben(l_i_kunde_id_in IN INTEGER, l_bi_schaeden_in IN INTEGER DEFAULT 0, l_v_bezeichnung_in IN VARCHAR2 DEFAULT NULL)
+  AS
+    l_i_exemplar_id INTEGER;
+    l_i_status_im_haus INTEGER := 3;
+    l_i_schaeden_id INTEGER;
+    BEGIN
+      COMMIT;
+      -- EXEMPLAR_ID herausfinden
+      l_i_exemplar_id := pa_exemplar.f_get_exemplar_id_i(l_i_kunde_id_in);
+      -- STATUS_ID in Exemplar Tabelle auf 3 (im Haus) setzen
+      pa_exemplar.sp_update_status(l_i_exemplar_id, l_i_status_im_haus);
+      -- In Verleih Tabelle RETOURNIERT auf 1 setzen
+      pa_exemplar.sp_auto_retournieren(l_i_exemplar_id);
+      DBMS_OUTPUT.PUT_LINE('Auto (ID ' || l_i_exemplar_id ||') zurückgegeben');
+      -- Falls Schäden vorhanden
+      IF l_bi_schaeden_in = 1
+      THEN
+      -- Checken ob Schaden Bezeichnung in Schaeden Tabelle exisiert, falls nicht --> einfügen
+        IF pa_schaeden.f_get_schaeden_count_bi(l_v_bezeichnung_in) < 1
+        THEN
+          l_i_schaeden_id := pa_schaeden.f_insert_schaden_i(l_v_bezeichnung_in);
+        ELSE
+          l_i_schaeden_id := pa_schaeden.f_get_schaeden_id_i(l_v_bezeichnung_in);
+        END IF;
+      -- EXEMPLAR_ID und SCHAEDEN_ID in EXEMP_SCHAEDEN einfügen
+        pa_schaeden.sp_insert_exemp_schaeden(l_i_exemplar_id, l_i_schaeden_id);
+      -- SCHADEN_ID in Exemplar Tabelle updaten
+        pa_exemplar.sp_update_schaden(l_i_exemplar_id, l_i_schaeden_id);
+        DBMS_OUTPUT.PUT_LINE('Schaden (ID ' || l_i_schaeden_id ||') eingefügt!');
+      END IF;
+      COMMIT;
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Kunde hat kein Auto, dass er zurückgeben könnte!');
+        ROLLBACK;
+      WHEN OTHERS THEN
+        --pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        ROLLBACK;
+    END sp_auto_zurueckgeben;
   /*************************************************************************/
 END;
 /
