@@ -73,10 +73,11 @@ AS
       FROM rechnungen_view
       WHERE KUNDE_ID = l_i_kunde_id_in
             AND BEZAHLT = 0;
+      RETURN l_i_exemplar_id;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
         --RETURN 0;
-        RAISE;
+        RAISE NO_DATA_FOUND;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
         RAISE;
