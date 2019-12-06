@@ -256,7 +256,6 @@ AS
         pa_schaeden.sp_insert_exemp_schaeden(l_i_exemplar_id, l_i_schaeden_id);
       -- SCHADEN_ID in Exemplar Tabelle updaten
         pa_exemplar.sp_update_schaden(l_i_exemplar_id, l_i_schaeden_id);
-        DBMS_OUTPUT.PUT_LINE('Schaden (ID ' || l_i_schaeden_id ||') eingefügt!');
       END IF;
       COMMIT;
     EXCEPTION

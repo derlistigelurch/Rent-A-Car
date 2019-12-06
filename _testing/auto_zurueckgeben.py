@@ -1,18 +1,53 @@
-""" 
-    TODO:
-        1. KUNDEN_ID herausfinden 
-                - (pa_kunde.sp_kunden_anzeigen)
-        2. EXEMPLAR_ID herausfinden 
-                - (SELECT * FROM RECHNUNGEN_VIEW WHERE KUNDEN_ID = l_i_kunde_id_in AND RETOURNIERT = 0)
-        3. STATUS_ID in Exemplar Tabelle auf 3 (im Haus) setzen 
-                - (pa_exemplar.sp_update_status(l_i_exemplar_id_in, 3))
-        4. In Verleih Tabelle RETOURNIERT auf 1 setzen (Trigger?)
-        5. Falls Schäden vorhanden: (Python)
-        5.1 Checken ob Schaden Bezeichnung in Schaeden Tabelle exisiert, falls nicht --> einfügen 
-                - (pa_schaeden.f_get_schaeden_count_bi(l_v_bezeichnung_in)) --> (pa_schaeden.get_schaden_id(l_v_bezeichnung_in))
-                - (pa_schaeden.f_insert_schaden_i(l_v_bezeichnung_in))
-        5.2 EXEMPLAR_ID und SCHAEDEN_ID in EXEMP_SCHAEDEN einfügen 
-                - (pa_schaeden.sp_insert_exemp_schaeden(l_i_exemplar_id_in, l_i_schaden_id))
-        5.3 SCHADEN_ID in Exemplar Tabelle updaten
-                - (pa_schaeden.sp_update_schaden(l_i_exemplar_id_in, l_i_schaden_id))
-"""
+import cx_Oracle
+import json
+with open('config/config.json') as config_file:
+    config = json.load(config_file)
+
+connection_string = config['username'] + '/' + config['password'] + \
+    '@' + config['ip_address'] + '/' + config['service']
+con = cx_Oracle.connect(connection_string)
+print(con.version)
+cursor = con.cursor()
+
+try:
+    # enable DBMS_OUTPUT
+    cursor.callproc("dbms_output.enable")
+    vorname = str(input('Vorname: '))
+    nachname = str(input('Nachname: '))
+    count = cursor.var(int)
+    cursor.callproc('pa_kunde.sp_kunden_anzeigen', [vorname, nachname, count])
+
+    textVar = cursor.var(str)
+    statusVar = cursor.var(int)
+    print("------------------------------------")
+    while True:
+        cursor.callproc("dbms_output.get_line", (textVar, statusVar))
+        if statusVar.getvalue() is not 0:
+            break
+        print(textVar.getvalue())
+    print("------------------------------------")
+    if count.getvalue() is not 0:
+        kunden_id = int(input('Kundennummer: '))
+
+        schaeden = int(input('Gibt es Schäden?\n1.) Ja\n2.)Nein\n:'))
+        if schaeden is 1:
+            bezeichnung = str(input('Bezeichnung: '))
+        else:
+            bezeichnung = None
+        
+        cursor.callproc('pa_verleih.sp_auto_zurueckgeben',
+                        [kunden_id, schaeden, bezeichnung])
+    while True:
+        cursor.callproc("dbms_output.get_line", (textVar, statusVar))
+        if statusVar.getvalue() is not 0:
+            break
+        print(textVar.getvalue())
+
+except ValueError:
+    print('Daten haben das falsche Format!')
+
+except KeyboardInterrupt:
+    print('\n\nVorgang wird abgebrochen...')
+
+finally:
+    con.close()
