@@ -1,8 +1,12 @@
 import subprocess as sp
 import cx_Oracle
+import functions as functions
+import json
+with open('config/config.json') as config_file:
+    config = json.load(config_file)
 
 def clearScreen():
-    tmp = sp.call('clear',shell=True)
+    sp.call('clear',shell=True)
 
 class userInterface:
     
@@ -10,8 +14,10 @@ class userInterface:
         self.control_unit = 0
         self.database = databaseAction()
         self.flag = 0
-        self.dsn_tns = cx_Oracle.makedsn('10.201.80.33','11521',service_name='XE')
-        self.connection = cx_Oracle.connect(user=r'system', password='oracle', dsn=self.dsn_tns) # jdbc:oracle:thin:@infdb.technikum-wien.at:1521/o10
+        #self.dsn_tns = cx_Oracle.makedsn('10.201.80.33','11521',service_name='XE')
+        #self.connection = cx_Oracle.connect(user=r'system', password='oracle', dsn=self.dsn_tns) # jdbc:oracle:thin:@infdb.technikum-wien.at:1521/o10
+        connection_string = config['username'] + '/' + config['password'] + '@' + config['ip_address'] + '/' + config['service']
+        self.connection = cx_Oracle.connect(connection_string)
         self.cursor = self.connection.cursor() 
 
     #Welcome screen
@@ -32,13 +38,13 @@ class userInterface:
         print("---------------------------------------")
         print("- 1.) Show views                      -")
         print("- 2.) Edit database                   -")
-        print("- 3.) Add entry                       -")
+        print("- 3.)-Add entry                       -")
         print("- 666.) -quit program-                -")
         print("---------------------------------------")
 
-        self.cursor.execute('SELECT username FROM dba_users')
-        for row in self.cursor:
-            print(row)
+        #self.cursor.execute('SELECT username FROM dba_users')
+        #for row in self.cursor:
+        #    print(row)
         self.control_unit = int(input("Please choose your option: "))
 
     #SCREEN: Show possible views
@@ -95,11 +101,11 @@ class userInterface:
             print("- 2.) EDIT customer                   -")
             print("- 3.) RENT car                        -")
             print("- 4.) RETURN car                      -")
-            print("- 5.) CHECK availability              -")
-            print("- 6.) CHECK status                    -")
-            print("- 7.) EDIT status                     -")
-            print("- 8.) SHOW pricelist                  -")
-            print("- 9.) EDIT damage                     -")
+            print("- 5.)-CHECK availability              -")
+            print("- 6.)-CHECK status                    -")
+            print("- 7.)-EDIT status                     -")
+            print("- 8.) SHOW bill                       -")
+            print("- 9.)-EDIT damage                     -")
             print("- 0.) return to main                  -")
             print("- 666.) -quit program-                -")
             print("---------------------------------------")
@@ -205,20 +211,24 @@ class databaseAction:
     ############EDIT DATABASE##########################
 
     def addCustomer(self):
-        print("Hello World")
-        self.cursor.execute(SQL)
+        print("KUNDE ANLEGEN")
+        #self.cursor.execute(SQL)
+        functions.kunde_anlegen()
 
     def editCustomer(self):
-        print("Hello World")
+        print("KUNDE BEARBEITEN")
         #implement SQL- Statement + output here
+        functions.kunde_bearbeiten()
 
     def rentCar(self):
-        print("Hello World")
+        print("AUTO VERLEIHEN")
         #implement SQL- Statement + output here
+        functions.auto_verleihen()
 
     def returnCar(self):
-        print("Hello World")
+        print("AUTO ZURÜCKGEBEN")
         #implement SQL- Statement + output here
+        functions.auto_zurueckgeben()
 
     def checkAvailability(self):
         print("Hello World")
@@ -235,6 +245,7 @@ class databaseAction:
     def showPricelist(self):
         print("Hello World")
         #implement SQL- Statement + output here
+        functions.rechnung_austellen()
 
     def editDamage(self):
         print("Hello World")                                    
@@ -250,9 +261,9 @@ class databaseAction:
         print("Hello World")                                    
         #implement SQL- Statement + output here
 
-    def showPricelist(self):
-        print("Hello World")                                    
-        #implement SQL- Statement + output here
+    #def showPricelist(self):
+    #    print("Hello World")                                    
+    #    #implement SQL- Statement + output here
 
     def showCustomerData(self):
         print("Hello World")                                    
