@@ -74,13 +74,13 @@ AS
       WHERE KUNDE_ID = l_i_kunde_id_in
             AND BEZAHLT = 0;
       RETURN l_i_exemplar_id;
-    EXCEPTION
+    /*EXCEPTION
       WHEN NO_DATA_FOUND THEN
         --RETURN 0;
         RAISE NO_DATA_FOUND;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_get_exemplar_id_i;
   /*************************************************************************/
   
@@ -91,10 +91,10 @@ AS
       UPDATE EXEMPLAR
       SET STATUS_ID = l_i_status_id_in
       WHERE EXEMPLAR_ID = l_i_exemplar_id_in;
-    EXCEPTION
+    /*EXCEPTION
         WHEN OTHERS THEN
           pa_err.sp_err_handling(SQLCODE, SQLERRM);
-          RAISE;
+          RAISE;*/
     END sp_update_status;
   /*************************************************************************/
   
@@ -105,10 +105,10 @@ AS
       UPDATE EXEMPLAR
       SET SCHAEDEN_ID = l_i_schaden_id_in
       WHERE EXEMPLAR_ID = l_i_exemplar_id_in;
-    EXCEPTION
+    /*EXCEPTION
         WHEN OTHERS THEN
           pa_err.sp_err_handling(SQLCODE, SQLERRM);
-          RAISE;
+          RAISE;*/
     END sp_update_schaden;
   /*************************************************************************/
   
@@ -123,10 +123,10 @@ AS
       FROM autos_hauptstandort_view
       WHERE EXEMPLAR_ID = l_i_exemplar_id_in;
       RETURN l_bi_verfuegbarkeit;
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_verfuegbarkeit_pruefen;
   /*************************************************************************/
   
@@ -138,6 +138,10 @@ AS
       UPDATE VERLEIH
       SET RETOURNIERT = l_i_retourniert
       WHERE EXEMPLAR_ID = l_i_exemplar_id_in;
+    /*EXCEPTION
+      WHEN OTHERS THEN
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        RAISE;*/
     END sp_auto_retournieren;
   /*************************************************************************/
 END;

@@ -95,12 +95,12 @@ AS
       WHERE VORNAME = l_v_vorname_in 
             AND NACHNAME = l_v_nachname_in;
       RETURN l_i_kunde_id;
-    EXCEPTION
+    /*EXCEPTION
       WHEN NO_DATA_FOUND THEN
         RAISE NO_DATA_FOUND;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_get_kunde_id_i;
   /*************************************************************************/
   
@@ -116,10 +116,10 @@ AS
       WHERE VERLEIH.KUNDE_ID = l_i_kunde_id_in 
             AND VERLEIH.RETOURNIERT = 0;
       RETURN l_bi_car_count;
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_get_car_count_bi;
   /*************************************************************************/
 
@@ -134,10 +134,10 @@ AS
       RETURNING KUNDE_ID
       INTO l_i_kunde_id;
       RETURN l_i_kunde_id;
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_insert_kunde_i;
   /*************************************************************************/
   
@@ -187,7 +187,7 @@ AS
         DBMS_OUTPUT.PUT_LINE('Wahrscheinlich gab es einen Fehler beim speichern der Daten!');
         ROLLBACK;
       WHEN OTHERS THEN
-        --pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
         ROLLBACK;
     END sp_kunde_anlegen;
@@ -213,7 +213,7 @@ AS
         DBMS_OUTPUT.PUT_LINE('Kunde nicht gefunden!');
         ROLLBACK;        
       WHEN OTHERS THEN
-        --pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
         ROLLBACK;
     END sp_name_bearbeiten;
@@ -250,6 +250,7 @@ AS
         DBMS_OUTPUT.PUT_LINE('Kein Kunde gefunden!');
         ROLLBACK;
       WHEN OTHERS THEN
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
         ROLLBACK;
     END sp_kunden_anzeigen;

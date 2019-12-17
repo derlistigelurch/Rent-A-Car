@@ -99,10 +99,10 @@ AS
       FROM POSTLEITZAHL
       WHERE PLZ = l_i_plz_in;
       RETURN l_bi_plz_count;
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_get_plz_count_bi;
   /*************************************************************************/
   
@@ -112,10 +112,10 @@ AS
     BEGIN
       INSERT INTO POSTLEITZAHL (PLZ, ORTSNAME) 
       VALUES (l_i_plz_in, l_v_ortsname_in);
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END sp_insert_plz;
   /*************************************************************************/
 
@@ -144,10 +144,10 @@ AS
               AND PLZ = l_i_plz_in;
       END IF;
       RETURN l_bi_adress_count;
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_get_adress_count_bi;
   /*************************************************************************/
 
@@ -176,13 +176,13 @@ AS
               AND PLZ = l_i_plz_in;
       END IF;
       RETURN l_i_adress_id;
-      EXCEPTION
+      /*EXCEPTION
         WHEN NO_DATA_FOUND THEN
           RETURN 0;
           --RAISE NO_DATA_FOUND
         WHEN OTHERS THEN
           pa_err.sp_err_handling(SQLCODE, SQLERRM);
-          RAISE;
+          RAISE;*/
     END f_get_adress_id_i;
   /*************************************************************************/
 
@@ -197,10 +197,10 @@ AS
       RETURNING ADRESS_ID
       INTO l_i_adress_id;
       RETURN l_i_adress_id;
-    EXCEPTION
+    /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
+        RAISE;*/
     END f_insert_adresse_i;
   /*************************************************************************/
   
@@ -248,7 +248,7 @@ AS
         DBMS_OUTPUT.PUT_LINE('Kunde nicht gefunden!');
         ROLLBACK;
       WHEN OTHERS THEN
-        --pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        pa_err.sp_err_handling(SQLCODE, SQLERRM);
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
         ROLLBACK;
     END sp_adresse_bearbeiten;
