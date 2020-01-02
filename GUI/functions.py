@@ -8,7 +8,7 @@ with open('config/config.json') as config_file:
 def auto_verleihen():
     connection_string = config['username'] + '/' + config['password'] + '@' + config['ip_address'] + '/' + config['service']
     con = cx_Oracle.connect(connection_string)
-    print(con.version)
+    # print(con.version)
     cursor = con.cursor()
 
     try:
@@ -64,7 +64,7 @@ def auto_zurueckgeben():
     connection_string = config['username'] + '/' + config['password'] + \
         '@' + config['ip_address'] + '/' + config['service']
     con = cx_Oracle.connect(connection_string)
-    print(con.version)
+    # print(con.version)
     cursor = con.cursor()
 
     try:
@@ -115,7 +115,7 @@ def auto_zurueckgeben():
 def kunde_anlegen():
     connection_string = config['username'] + '/' + config['password'] + '@' + config['ip_address'] + '/' + config['service']
     con = cx_Oracle.connect(connection_string)
-    print(con.version)
+    # print(con.version)
     cursor = con.cursor()
     try:
         # enable DBMS_OUTPUT
@@ -164,7 +164,7 @@ def kunde_anlegen():
 def kunde_bearbeiten():
     connection_string = config['username'] + '/' + config['password'] + '@' + config['ip_address'] + '/' + config['service']
     con = cx_Oracle.connect(connection_string)
-    print(con.version)
+    # print(con.version)
     cursor = con.cursor()
 
     try:
@@ -233,7 +233,7 @@ def kunde_bearbeiten():
 def rechnung_austellen():
     connection_string = config['username'] + '/' + config['password'] + '@' + config['ip_address'] + '/' + config['service']
     con = cx_Oracle.connect(connection_string)
-    print(con.version)
+    # print(con.version)
     cursor = con.cursor()
 
     try:

@@ -44,7 +44,7 @@ AS
   /** Description: Checkt ob die angegebene PLZ schon vorhanden ist
   /**
   /**********************************************************************/
-  PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER);
+  -- PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER);
 END pa_schaeden;
 /
 
@@ -106,6 +106,7 @@ AS
   /*************************************************************************/
   
   /* sp_insert_exemp_schaeden_i definition **********************************/
+  /*
   PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER)
   AS
     BEGIN
@@ -114,8 +115,9 @@ AS
     /*EXCEPTION
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
+        RAISE;
     END sp_insert_exemp_schaeden;
+    */
   /*************************************************************************/
 END;
 /

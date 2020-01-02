@@ -119,7 +119,7 @@ AS
            l_bi_bezahlt
       FROM RECHNUNGEN_VIEW
       WHERE KUNDE_ID = l_i_kunde_id_in
-            AND BEZAHLT = 1;
+            AND BEZAHLT = 0;
     RETURN l_i_verleih_id || ',' || l_i_kunde_id || ',' || l_v_vorname || ',' || l_v_nachname || ',' || l_i_mitarbeiter_id || ',' || l_v_bezeichnung || ',' || l_v_modell_beschreibung || ',' || l_i_dauer || ',' || l_i_kosten_pro_tag || ',' || l_i_kosten_insgesamt || ',' || l_bi_bezahlt;
     /*EXCEPTION
       WHEN NO_DATA_FOUND THEN
@@ -255,9 +255,9 @@ AS
           l_i_schaeden_id := pa_schaeden.f_get_schaeden_id_i(l_v_bezeichnung_in);
         END IF;
       -- EXEMPLAR_ID und SCHAEDEN_ID in EXEMP_SCHAEDEN einfügen
-        pa_schaeden.sp_insert_exemp_schaeden(l_i_exemplar_id, l_i_schaeden_id);
+      -- pa_schaeden.sp_insert_exemp_schaeden(l_i_exemplar_id, l_i_schaeden_id);
       -- SCHADEN_ID in Exemplar Tabelle updaten
-        pa_exemplar.sp_update_schaden(l_i_exemplar_id, l_i_schaeden_id);
+      -- pa_exemplar.sp_update_schaden(l_i_exemplar_id, l_i_schaeden_id);
       END IF;
       COMMIT;
     EXCEPTION
