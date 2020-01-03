@@ -1,5 +1,12 @@
 SET SERVEROUTPUT ON;
 /
+/**********************************************************************
+/*
+/* Package: pa_exemplar
+/* Developer:
+/* Description: Beinhaltet alle Exemplar-Tabellen-Funktionen
+/*
+/**********************************************************************/
 CREATE OR REPLACE PACKAGE pa_exemplar
 AS
   /*********************************************************************

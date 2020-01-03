@@ -1,5 +1,12 @@
 SET SERVEROUTPUT ON;
 /
+/**********************************************************************
+/*
+/* Package: pa_err
+/* Developer:
+/* Description: Beinhaltet alle Funktionen die benötigt werden um Fehler zu protokollieren
+/*
+/**********************************************************************/
 CREATE OR REPLACE PACKAGE pa_err
 AS
   /*********************************************************************

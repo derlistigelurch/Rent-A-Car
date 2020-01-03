@@ -1,5 +1,12 @@
 SET SERVEROUTPUT ON;
 /
+/**********************************************************************
+/*
+/* Package: pa_schaeden
+/* Developer:
+/* Description: Beinhaltet alle Schaeden-Tabellen-Funktionen
+/*
+/**********************************************************************/
 CREATE OR REPLACE PACKAGE pa_schaeden
 AS
   /*********************************************************************

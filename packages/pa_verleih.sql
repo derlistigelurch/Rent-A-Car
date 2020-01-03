@@ -1,5 +1,12 @@
 SET SERVEROUTPUT ON;
 /
+/**********************************************************************
+/*
+/* Package: pa_verleih
+/* Developer:
+/* Description: Beinhaltet alle Verleih-Tabellen-Funktionen
+/*
+/**********************************************************************/
 CREATE OR REPLACE PACKAGE pa_verleih
 AS
   /*********************************************************************
@@ -240,7 +247,9 @@ AS
       pa_exemplar.sp_update_status(l_i_exemplar_id, l_i_status_im_haus);
       -- In Verleih Tabelle RETOURNIERT auf 1 setzen
       pa_exemplar.sp_auto_retournieren(l_i_exemplar_id);
+      DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       DBMS_OUTPUT.PUT_LINE('Auto (ID ' || l_i_exemplar_id ||') zurückgegeben');
+      DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       -- Falls Schäden vorhanden
       IF l_bi_schaeden_in = 1
       THEN

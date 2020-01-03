@@ -1,5 +1,12 @@
 SET SERVEROUTPUT ON;
 /
+/**********************************************************************
+/*
+/* Package: pa_person
+/* Developer:
+/* Description: Beinhaltet alle Person-Tabellen-Funktionen
+/*
+/**********************************************************************/
 CREATE OR REPLACE PACKAGE pa_person
 AS
   /*********************************************************************

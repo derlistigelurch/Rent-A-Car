@@ -1,1 +1,23 @@
-DROP INDEX
+DROP INDEX verleih_verliehen_von_index;
+DROP INDEX verleih_verliehen_bis_index;
+DROP INDEX verleih_exemplar_id_index;
+DROP INDEX verleih_kunde_id_index;
+DROP INDEX verleih_mitarbeiter_id_index;
+DROP INDEX exemplar_status_id_index;
+DROP INDEX exemplar_schaeden_id_index;
+DROP INDEX exemplar_standort_id_index;
+DROP INDEX exemplar_auto_details_id_index;
+DROP INDEX exemplar_kennzeichen_index;
+DROP INDEX auto_details_preis_id_index;
+DROP INDEX auto_details_herst_id_index;
+DROP INDEX auto_details_modell_index;
+DROP INDEX mitarbeiter_person_id_index;
+DROP INDEX mitarbeiter_standort_id_index;
+DROP INDEX adresse_plz_index;
+DROP INDEX kunde_person_id_index;
+DROP INDEX person_adress_id_index;
+DROP INDEX person_name_index;
+DROP INDEX plz_ortsname_index;
+DROP INDEX schaeden_beschreibung_index;
+
+COMMIT;

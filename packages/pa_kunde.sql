@@ -1,5 +1,12 @@
 SET SERVEROUTPUT ON;
 /
+/**********************************************************************
+/*
+/* Package: pa_kunde
+/* Developer:
+/* Description: Beinhaltet alle Kunde-Tabellen-Funktionen
+/*
+/**********************************************************************/
 CREATE OR REPLACE PACKAGE pa_kunde
 AS
   /*********************************************************************
@@ -173,9 +180,9 @@ AS
       -- Kunde anlegen (KundeID, PersonID)
       -- FUNCTION f_insert_kunde_i (l_i_person_id_in IN INTEGER) RETURN INTEGER
       l_i_kunde_id := pa_kunde.f_insert_kunde_i(l_i_person_id);
-      DBMS_OUTPUT.PUT_LINE('---------------------------------------');
-      DBMS_OUTPUT.PUT_LINE(TO_CHAR('Neuer Kunde ' || l_v_vorname_in|| ' ' || l_v_nachname_in || ' mit der KundenID ' || l_i_kunde_id || ' wurde angelegt!'));
-      DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+      -- DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+      -- DBMS_OUTPUT.PUT_LINE(TO_CHAR('Neuer Kunde ' || l_v_vorname_in|| ' ' || l_v_nachname_in || ' mit der KundenID ' || l_i_kunde_id || ' wurde angelegt!'));
+      -- DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       COMMIT;
     EXCEPTION
       WHEN VALUE_ERROR THEN
@@ -186,7 +193,7 @@ AS
         ROLLBACK;
       WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('Die Adresse konnte nicht gefunden werden!');
-        DBMS_OUTPUT.PUT_LINE('Wahrscheinlich gab es einen Fehler beim speichern der Daten!');
+        DBMS_OUTPUT.PUT_LINE('Wahrscheinlich gab es einen Fehler beim Speichern der Daten!');
         ROLLBACK;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
