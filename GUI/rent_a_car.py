@@ -1,4 +1,3 @@
-import subprocess as sp
 import cx_Oracle
 import functions as functions
 import json
@@ -16,12 +15,13 @@ def main_screen():
     print("---------------------------------------")
     print("-Choose an option:                    -")
     print("---------------------------------------")
-    print("- 1.) Add customer                    -")
-    print("- 2.) Edit customer                   -")
-    print("- 3.) Rent a car                      -")
-    print("- 4.) Return a car                    -")
+    print("- 1.) Kunde hinzufügen                -")
+    print("- 2.) Kunde bearbeiten                -")
+    print("- 3.) Auto verleihen                  -")
+    print("- 4.) Auto zurückgeben                -")
+    print("- 5.) Rechnung ausstellen             -")
     print("-                                     -")
-    print("- 5.) QUIT                            -")
+    print("- 6.) Beenden                         -")
     print("---------------------------------------")
 
 
@@ -41,6 +41,8 @@ while(True):
         elif i == 4:
             functions.auto_zurueckgeben()
         elif i == 5:
+            functions.rechnung_austellen()
+        elif i == 6:
             exit()
 
     except ValueError:
@@ -48,3 +50,7 @@ while(True):
 
     except KeyboardInterrupt:
         print('\n\nVorgang wird abgebrochen...\n\n')
+
+    except EOFError:
+        print('\n')
+        exit()

@@ -12,7 +12,7 @@ AS
   /** Description: Ausgabe der Kunden ID
   /**
   /*********************************************************************/
-  FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2) RETURN INTEGER;
+  -- FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2) RETURN INTEGER;
   
   /*********************************************************************
   /**
@@ -84,7 +84,7 @@ END pa_kunde;
 CREATE OR REPLACE PACKAGE BODY pa_kunde
 AS
   /* f_get_kunde_id_i definition *********************************************/
-  FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2)
+  /*FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2)
   RETURN INTEGER
   AS
     l_i_kunde_id INTEGER;
@@ -95,13 +95,13 @@ AS
       WHERE VORNAME = l_v_vorname_in 
             AND NACHNAME = l_v_nachname_in;
       RETURN l_i_kunde_id;
-    /*EXCEPTION
+    EXCEPTION
       WHEN NO_DATA_FOUND THEN
         RAISE NO_DATA_FOUND;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
-    END f_get_kunde_id_i;
+        RAISE;
+    END f_get_kunde_id_i;*/
   /*************************************************************************/
   
   /* f_get_car_count_bi definition *******************************************/
@@ -173,7 +173,9 @@ AS
       -- Kunde anlegen (KundeID, PersonID)
       -- FUNCTION f_insert_kunde_i (l_i_person_id_in IN INTEGER) RETURN INTEGER
       l_i_kunde_id := pa_kunde.f_insert_kunde_i(l_i_person_id);
-      dbms_output.put_line(TO_CHAR('Neuer Kunde ' || l_v_vorname_in|| ' ' || l_v_nachname_in || ' mit der KundenID ' || l_i_kunde_id || ' wurde angelegt!'));
+      DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+      DBMS_OUTPUT.PUT_LINE(TO_CHAR('Neuer Kunde ' || l_v_vorname_in|| ' ' || l_v_nachname_in || ' mit der KundenID ' || l_i_kunde_id || ' wurde angelegt!'));
+      DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       COMMIT;
     EXCEPTION
       WHEN VALUE_ERROR THEN
@@ -205,8 +207,8 @@ AS
       -- Namen ändern
       -- PROCEDURE sp_change_name (l_i_person_id_in IN INTEGER, l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2)
       pa_person.sp_change_name(l_i_person_id, l_v_vorname_neu_in, l_v_nachanme_neu_in);
-      DBMS_OUTPUT.PUT_LINE('Name geändert!');
-      DBMS_OUTPUT.PUT_LINE('Neuer Name: ' || l_v_vorname_neu_in || ' ' || l_v_nachanme_neu_in || ', Kunden ID: ' || l_i_kunde_id_in); 
+      -- DBMS_OUTPUT.PUT_LINE('Name geändert!');
+      -- DBMS_OUTPUT.PUT_LINE('Neuer Name: ' || l_v_vorname_neu_in || ' ' || l_v_nachanme_neu_in || ', Kunden ID: ' || l_i_kunde_id_in); 
       COMMIT;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN

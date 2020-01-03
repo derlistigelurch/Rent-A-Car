@@ -1,6 +1,6 @@
 {
     "username": "system",
     "password": "oracle",
-    "ip_address": "192.168.8.102",
+    "ip_address": "192.168.0.192",
     "service": "XE"
 }

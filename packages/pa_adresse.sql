@@ -235,13 +235,13 @@ AS
       -- AdressId ändern
       -- PROCEDURE sp_update_adress_id (l_i_person_id_in IN INTEGER, l_i_adress_id_in IN INTEGER)
       pa_person.sp_update_adress_id(l_i_person_id, l_i_adress_id);
-      DBMS_OUTPUT.PUT_LINE('Adresse geändert!');
-      IF l_i_tuernr_in IS NULL
-      THEN
-        DBMS_OUTPUT.PUT_LINE('Neue Adresse: ' || l_v_strasse_in || ' ' || l_i_hausnr_in || ', ' || l_i_plz_in || ' ' || l_v_ortsname_in || ', Adress ID: ' || l_i_adress_id);
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('Neue Adresse: ' || l_v_strasse_in || ' ' || l_i_hausnr_in || '/' || l_i_tuernr_in || ', ' || l_i_plz_in || ' ' || l_v_ortsname_in || ', Adress ID: ' || l_i_adress_id);
-      END IF;
+      -- DBMS_OUTPUT.PUT_LINE('Adresse geändert!');
+      -- IF l_i_tuernr_in IS NULL
+      -- THEN
+      --   DBMS_OUTPUT.PUT_LINE('Neue Adresse: ' || l_v_strasse_in || ' ' || l_i_hausnr_in || ', ' || l_i_plz_in || ' ' || l_v_ortsname_in || ', Adress ID: ' || l_i_adress_id);
+      -- ELSE
+      --   DBMS_OUTPUT.PUT_LINE('Neue Adresse: ' || l_v_strasse_in || ' ' || l_i_hausnr_in || '/' || l_i_tuernr_in || ', ' || l_i_plz_in || ' ' || l_v_ortsname_in || ', Adress ID: ' || l_i_adress_id);
+      -- END IF;
       COMMIT;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN

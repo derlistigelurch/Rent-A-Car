@@ -15,10 +15,28 @@ def auto_verleihen():
         # enable DBMS_OUTPUT
         cursor.callproc("dbms_output.enable")
         count = cursor.var(int)
-        cursor.callproc('pa_verleih.sp_autos_anzeigen', [count])
+        # enable DBMS_OUTPUT
+        cursor.callproc("dbms_output.enable")
+        vorname = str(input('Vorname: '))
+        nachname = str(input('Nachname: '))
+        count = cursor.var(int)
+        cursor.callproc('pa_kunde.sp_kunden_anzeigen', [vorname, nachname, count])
 
         textVar = cursor.var(str)
         statusVar = cursor.var(int)
+        print("------------------------------------")
+        while True:
+            cursor.callproc("dbms_output.get_line", (textVar, statusVar))
+            if statusVar.getvalue() is not 0:
+                break
+            print(textVar.getvalue())
+        print("------------------------------------")
+        
+        if count.getvalue() is not 0:
+            kunden_id = int(input('Kundennummer: '))
+        
+        cursor.callproc('pa_verleih.sp_autos_anzeigen', [count])
+
         while True:
             cursor.callproc("dbms_output.get_line", (textVar, statusVar))
             if statusVar.getvalue() is not 0:
@@ -26,8 +44,6 @@ def auto_verleihen():
             print(textVar.getvalue())
 
         if count.getvalue() is not 0:
-            vorname = str(input('Vorname: '))
-            nachname = str(input('Nachname: '))
             exemplar_id = int(input('Exemplar ID: '))
 
             verliehen_von = str(input('Verliehen von: '))
@@ -41,7 +57,7 @@ def auto_verleihen():
                 verliehen_bis, '%d-%m-%Y').date()
 
             cursor.callproc('pa_verleih.sp_auto_verleihen', [
-                            vorname, nachname, exemplar_id, datetime_verliehen_von, datetime_verliehen_bis])
+                            kunden_id, exemplar_id, datetime_verliehen_von, datetime_verliehen_bis])
 
             while True:
                 cursor.callproc("dbms_output.get_line", (textVar, statusVar))
