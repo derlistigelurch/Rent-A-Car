@@ -1,5 +1,3 @@
-SET SERVEROUTPUT ON;
-/
 /**********************************************************************
 /*
 /* Package: pa_kunde
@@ -11,23 +9,11 @@ CREATE OR REPLACE PACKAGE pa_kunde
 AS
   /*********************************************************************
   /**
-  /** Function: f_get_kunde_id_i
-  /** In: l_v_vorname_in - Vorname des Kunden
-  /** In: l_v_nachname_in - Nachname des Kunden
-  /** Returns: ID des Kunden
-  /** Developer: 
-  /** Description: Ausgabe der Kunden ID
-  /**
-  /*********************************************************************/
-  -- FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2) RETURN INTEGER;
-  
-  /*********************************************************************
-  /**
   /** Function: f_get_car_count_bi
   /** In: l_i_kunde_id_in - ID des Kunden
   /** Returns: Anzahl der geliehenen Autos
   /** Developer: 
-  /** Description: Ausgabe der Kunden ID
+  /** Description: Gibt aus wie viel Autos der Kunde gerade ausgeliehen hat 0 oder 1
   /**
   /*********************************************************************/
   FUNCTION f_get_car_count_bi (l_i_kunde_id_in IN INTEGER) RETURN INTEGER;
@@ -90,27 +76,6 @@ END pa_kunde;
 --------------------------------------
 CREATE OR REPLACE PACKAGE BODY pa_kunde
 AS
-  /* f_get_kunde_id_i definition *********************************************/
-  /*FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2)
-  RETURN INTEGER
-  AS
-    l_i_kunde_id INTEGER;
-    BEGIN
-      SELECT KUNDENNUMMER
-      INTO l_i_kunde_id
-      FROM kundendaten_view
-      WHERE VORNAME = l_v_vorname_in 
-            AND NACHNAME = l_v_nachname_in;
-      RETURN l_i_kunde_id;
-    EXCEPTION
-      WHEN NO_DATA_FOUND THEN
-        RAISE NO_DATA_FOUND;
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
-    END f_get_kunde_id_i;*/
-  /*************************************************************************/
-  
   /* f_get_car_count_bi definition *******************************************/
   FUNCTION f_get_car_count_bi (l_i_kunde_id_in IN INTEGER)
   RETURN INTEGER
@@ -123,10 +88,6 @@ AS
       WHERE VERLEIH.KUNDE_ID = l_i_kunde_id_in 
             AND VERLEIH.RETOURNIERT = 0;
       RETURN l_bi_car_count;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_car_count_bi;
   /*************************************************************************/
 
@@ -141,10 +102,6 @@ AS
       RETURNING KUNDE_ID
       INTO l_i_kunde_id;
       RETURN l_i_kunde_id;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_insert_kunde_i;
   /*************************************************************************/
   
@@ -155,7 +112,7 @@ AS
     l_i_person_id INTEGER;
     l_i_kunde_id INTEGER;
     BEGIN
-      COMMIT;
+      SAVEPOINT l_savepoint;
       -- Adresse einfügen
       -- PLZ bereits vorhanden? Wenn nicht, dann einfügen (PLZ, Ortsname)
       -- FUNCTION f_get_plz_count_bi(l_i_plz_in IN INTEGER) 
@@ -180,25 +137,30 @@ AS
       -- Kunde anlegen (KundeID, PersonID)
       -- FUNCTION f_insert_kunde_i (l_i_person_id_in IN INTEGER) RETURN INTEGER
       l_i_kunde_id := pa_kunde.f_insert_kunde_i(l_i_person_id);
-      -- DBMS_OUTPUT.PUT_LINE('---------------------------------------');
-      -- DBMS_OUTPUT.PUT_LINE(TO_CHAR('Neuer Kunde ' || l_v_vorname_in|| ' ' || l_v_nachname_in || ' mit der KundenID ' || l_i_kunde_id || ' wurde angelegt!'));
-      -- DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       COMMIT;
     EXCEPTION
       WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Die eingegebenen Daten haben das falsche Format!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN INVALID_NUMBER THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Die eingegebenen Daten haben das falsche Format!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Die Adresse konnte nicht gefunden werden!');
         DBMS_OUTPUT.PUT_LINE('Wahrscheinlich gab es einen Fehler beim Speichern der Daten!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
     END sp_kunde_anlegen;
   /*************************************************************************/
   
@@ -207,24 +169,26 @@ AS
   AS
     l_i_person_id INTEGER;
     BEGIN
-      COMMIT;
+      SAVEPOINT l_savepoint;
       -- Person_ID herausfinen
       -- FUNCTION f_get_person_id (l_i_kunde_id_in IN INTEGER) RETURN INTEGER
       l_i_person_id := pa_person.f_get_person_id(l_i_kunde_id_in);
       -- Namen ändern
       -- PROCEDURE sp_change_name (l_i_person_id_in IN INTEGER, l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2)
       pa_person.sp_change_name(l_i_person_id, l_v_vorname_neu_in, l_v_nachanme_neu_in);
-      -- DBMS_OUTPUT.PUT_LINE('Name geändert!');
-      -- DBMS_OUTPUT.PUT_LINE('Neuer Name: ' || l_v_vorname_neu_in || ' ' || l_v_nachanme_neu_in || ', Kunden ID: ' || l_i_kunde_id_in); 
       COMMIT;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Kunde nicht gefunden!');
-        ROLLBACK;        
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;        
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
     END sp_name_bearbeiten;
   /*************************************************************************/
   
@@ -239,7 +203,7 @@ AS
       FROM KUNDENDATEN_VIEW 
       WHERE VORNAME = l_v_vorname_in 
             AND NACHNAME = l_v_nachname_in;
-    
+
       IF l_i_kunde_count_ou > 0
       THEN
         FOR l_v_result_cv IN kunde_cur
@@ -256,12 +220,14 @@ AS
       END IF;
     EXCEPTION
       WHEN x_no_kunden_data_found THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Kein Kunde gefunden!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
     END sp_kunden_anzeigen;
   /*************************************************************************/
 END;

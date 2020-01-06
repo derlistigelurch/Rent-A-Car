@@ -1,5 +1,3 @@
-SET SERVEROUTPUT ON;
-/
 /**********************************************************************
 /*
 /* Package: pa_schaeden
@@ -41,17 +39,6 @@ AS
   /**
   /*********************************************************************/
   FUNCTION f_insert_schaden_i (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
-  
-  /*********************************************************************
-  /**
-  /** Procedure: sp_insert_exemp_schaeden
-  /** In: l_i_exemplar_id - Exemplar ID
-  /** In: l_i_schaeden_id_in - Schaden ID
-  /** Developer: 
-  /** Description: Checkt ob die angegebene PLZ schon vorhanden ist
-  /**
-  /**********************************************************************/
-  -- PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER);
 END pa_schaeden;
 /
 
@@ -70,12 +57,9 @@ AS
       FROM SCHAEDEN
       WHERE SCHAEDEN.BESCHREIBUNG = l_v_schaeden_in;
       RETURN l_i_schaeden_id;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_schaeden_id_i;
   /*************************************************************************/
+
   /* f_get_schaeden_count_bi definition **************************************/
   FUNCTION f_get_schaeden_count_bi (l_v_schaeden_in IN VARCHAR2)
   RETURN INTEGER
@@ -87,10 +71,6 @@ AS
       FROM SCHAEDEN
       WHERE BESCHREIBUNG = l_v_schaeden_in;
       RETURN l_bi_schaeden_count;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_schaeden_count_bi;
   /*************************************************************************/
   
@@ -105,27 +85,7 @@ AS
       RETURNING SCHAEDEN_ID
       INTO l_i_schaeden_id;
       RETURN l_i_schaeden_id;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_insert_schaden_i;
-  /*************************************************************************/
-  
-  /* sp_insert_exemp_schaeden_i definition **********************************/
-  /*
-  PROCEDURE sp_insert_exemp_schaeden (l_i_exemplar_id IN INTEGER, l_i_schaeden_id_in IN INTEGER)
-  AS
-    BEGIN
-      INSERT INTO EXEMP_SCHAEDEN (KOMBO_ID, SCHAEDEN_ID, EXEMPLAR_ID) 
-      VALUES (exemp_schaden_seq.NEXTVAL, l_i_schaeden_id_in, l_i_exemplar_id);
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;
-    END sp_insert_exemp_schaeden;
-    */
-  /*************************************************************************/
 END;
 /
 COMMIT;

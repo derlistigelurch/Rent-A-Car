@@ -50,20 +50,6 @@ CREATE TABLE EXEMPLAR
 
 /*********************************************************************
 /**
-/** Table: EXEMP_SCHAEDEN
-/** Developer:
-/** Description: Fahrzeugen werden Schadensnummern zugewiesen (<-- m:n)
-/**
-/*********************************************************************/
--- CREATE TABLE EXEMP_SCHAEDEN
--- (
---  KOMBO_ID NUMBER PRIMARY KEY,
---  SCHAEDEN_ID NUMBER NOT NULL,
---	EXEMPLAR_ID NUMBER NOT NULL	
--- );
-
-/*********************************************************************
-/**
 /** Table: SCHAEDEN
 /** Developer:
 /** Description: Beschreibungen der Schaeden (Motorschaden, ...)
@@ -234,11 +220,6 @@ ALTER TABLE EXEMPLAR ADD FOREIGN KEY (STANDORT_ID)
 	  REFERENCES STANDORT (STANDORT_ID) ENABLE;
 ALTER TABLE EXEMPLAR ADD FOREIGN KEY (AUTO_DETAILS_ID)
 	  REFERENCES AUTO_DETAILS (DETAIL_ID) ENABLE;
-
--- ALTER TABLE EXEMP_SCHAEDEN ADD FOREIGN KEY (SCHAEDEN_ID)
---	  REFERENCES SCHAEDEN (SCHAEDEN_ID) ENABLE;
--- ALTER TABLE EXEMP_SCHAEDEN ADD FOREIGN KEY (EXEMPLAR_ID)
---	  REFERENCES EXEMPLAR (EXEMPLAR_ID) ENABLE;
 
 ALTER TABLE AUTO_DETAILS ADD FOREIGN KEY (PREIS_ID)
 	  REFERENCES PREISLISTE (PREIS_ID) ENABLE;

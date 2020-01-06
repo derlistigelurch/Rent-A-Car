@@ -1,5 +1,3 @@
-SET SERVEROUTPUT ON;
-/
 /**********************************************************************
 /*
 /* Package: pa_verleih
@@ -59,8 +57,8 @@ AS
   
   /*********************************************************************
   /**
-  /** Procedure: sp_auto_verleihen
-  /** Out: l_v_rechnung_ou - Anzahl der gefundenen Autos
+  /** Procedure: sp_rechnung_anzeigen
+  /** Out: l_v_rechnung_ou - Rechnung des Kunden
   /** IN: l_i_kunde_id_in - ID des Kunden
   /** Developer: 
   /** Description: Rechnung anzeigen
@@ -126,12 +124,6 @@ AS
       WHERE KUNDE_ID = l_i_kunde_id_in
             AND BEZAHLT = 0;
     RETURN l_i_verleih_id || ',' || l_i_kunde_id || ',' || l_v_vorname || ',' || l_v_nachname || ',' || l_i_mitarbeiter_id || ',' || l_v_bezeichnung || ',' || l_v_modell_beschreibung || ',' || l_i_dauer || ',' || l_i_kosten_pro_tag || ',' || l_i_kosten_insgesamt || ',' || l_bi_bezahlt;
-    /*EXCEPTION
-      WHEN NO_DATA_FOUND THEN
-        RAISE NO_DATA_FOUND;
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_rechnung_v;
   /*************************************************************************/
   /* sp_insert_exemplar definition *******************************************/
@@ -142,10 +134,6 @@ AS
     BEGIN
       INSERT INTO VERLEIH (VERLEIH_ID, EXEMPLAR_ID, KUNDE_ID, VERLIEHEN_AB, VERLIEHEN_BIS, RETOURNIERT, MITARBEITER_ID) 
       VALUES (verleih_seq.NEXTVAL, l_i_exemplar_id_in, l_i_kunde_id_in, l_d_verliehen_ab_in, l_d_verliehen_bis_in, l_i_nicht_retourniert, l_i_mitarbeiter_id_in);
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END sp_insert_exemplar;
   /*************************************************************************/
   
@@ -161,21 +149,25 @@ AS
     
       IF l_i_car_count_ou > 0
       THEN
-        DBMS_OUTPUT.PUT_LINE('------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         FOR l_v_result_cv IN car_cur
         LOOP
           DBMS_OUTPUT.PUT_LINE('| ID: ' || l_v_result_cv.EXEMPLAR_ID || ' ' || l_v_result_cv.BEZEICHNUNG || ' ' || l_v_result_cv.MODELL_BESCHREIBUNG || ' PS: ' || l_v_result_cv.PS || ' Verbrauch: ' || l_v_result_cv.VERBRAUCH);
         END LOOP;
-        DBMS_OUTPUT.PUT_LINE('------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       ELSE
         RAISE x_no_cars_available;
       END IF;
     EXCEPTION
       WHEN x_no_cars_available THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Keine Fahrzeuge verfügbar!');
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         ROLLBACK;
       WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         ROLLBACK;
   END sp_autos_anzeigen;
   /*************************************************************************/
@@ -187,34 +179,35 @@ AS
     l_i_status_verliehen INTEGER := 1;
     x_too_many_cars EXCEPTION;
     BEGIN
-    COMMIT;
-    -- KUNDEN_ID mit Vorname und Nachname herausfinden
-    -- FUNCTION f_get_kunde_id_i (l_v_vorname_in IN VARCHAR2, l_v_nachname_in IN VARCHAR2) RETURN INTEGER
-    -- l_i_kunde_id := pa_kunde.f_get_kunde_id_i(l_v_vorname_in, l_v_nachname_in);
-    -- Überprüfen ob die KUNDEN_ID bereits in der Verleih Tabelle vorhanden ist, wenn ja abbrechen
-    -- FUNCTION f_get_car_count_bi (l_i_kunde_id_in IN INTEGER) RETURN INTEGER
+    SAVEPOINT l_savepoint;
+    -- FUNCTION f_get_car_count_bi (l_i_kunde_id_in IN INTEGER) RETURN INTEGER;
     IF pa_kunde.f_get_car_count_bi (l_i_kunde_id_in) > 0
     THEN
       RAISE x_too_many_cars;
     END IF;
-    -- STATUS_ID in Exemplar Tabelle auf 1 (Verliehen) setzen (TODO: Trigger)
+    -- STATUS_ID in Exemplar Tabelle auf 1 (Verliehen) setzen
     -- PROCEDURE sp_update_status (l_i_exemplar_id_in IN INTEGER, l_i_status_id_in IN INTEGER);
     pa_exemplar.sp_update_status(l_i_exemplar_id_in, l_i_status_verliehen);
     -- In Verleih Tabelle EXEMPLAR_ID, KUNDE_ID, VERLEIHEN_AB, VERLEIHEN_BIS, RETOURNIERT = 0 und MITARBEITER_ID einfügen
     -- PROCEDURE sp_insert_exemplar (l_i_exemplar_id_in IN INTEGER, l_i_kunde_id_in IN INTEGER, l_d_verliehen_ab_in IN DATE, l_d_verliehen_bis_in IN DATE, l_i_mitarbeiter_id_in IN INTEGER);
     pa_verleih.sp_insert_exemplar(l_i_exemplar_id_in, l_i_kunde_id_in, l_d_verliehen_ab_in, l_d_verliehen_bis_in, l_i_mitarbeiter_id);
-    -- DBMS_OUTPUT.PUT_LINE('Fahrzeug (ID ' || l_i_exemplar_id_in || ') an Kunden (ID ' || l_i_kunde_id || ') verliehen!');
     COMMIT;
     EXCEPTION
       WHEN x_too_many_cars THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Kunde hat schon ein Auto ausgeliehen!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Keinen Eintrag gefunden!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
   END sp_auto_verleihen;
   /*************************************************************************/
   
@@ -226,7 +219,9 @@ AS
       l_v_rechnung_ou := pa_verleih.f_get_rechnung_v(l_i_kunde_id_in);
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Für diesen Kunden gibt es keine Rechnung!');
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
   END sp_rechnung_anzeigen;
@@ -240,42 +235,49 @@ AS
     l_i_status_kaputt INTEGER := 3;
     l_i_schaeden_id INTEGER;
     BEGIN
-      COMMIT;
+      SAVEPOINT l_savepoint;
       -- EXEMPLAR_ID herausfinden
+      -- FUNCTION f_get_exemplar_id_i (l_i_kunde_id_in IN INTEGER) RETURN INTEGER;
       l_i_exemplar_id := pa_exemplar.f_get_exemplar_id_i(l_i_kunde_id_in);
       -- STATUS_ID in Exemplar Tabelle auf 2 (im Haus) setzen
+      -- PROCEDURE sp_update_status (l_i_exemplar_id_in IN INTEGER, l_i_status_id_in IN INTEGER);
       pa_exemplar.sp_update_status(l_i_exemplar_id, l_i_status_im_haus);
       -- In Verleih Tabelle RETOURNIERT auf 1 setzen
+      -- PROCEDURE sp_auto_retournieren (l_i_exemplar_id_in IN INTEGER);
       pa_exemplar.sp_auto_retournieren(l_i_exemplar_id);
       DBMS_OUTPUT.PUT_LINE('---------------------------------------');
-      DBMS_OUTPUT.PUT_LINE('Auto (ID ' || l_i_exemplar_id ||') zurückgegeben');
+      DBMS_OUTPUT.PUT_LINE('Auto (ID ' || l_i_exemplar_id ||') zurueckgegeben!');
       DBMS_OUTPUT.PUT_LINE('---------------------------------------');
       -- Falls Schäden vorhanden
       IF l_bi_schaeden_in = 1
       THEN
       -- STATUS_ID in Exemplar Tabelle auf 2 (im Haus) setzen
+        -- PROCEDURE sp_update_status (l_i_exemplar_id_in IN INTEGER, l_i_status_id_in IN INTEGER);
         pa_exemplar.sp_update_status(l_i_exemplar_id, l_i_status_im_haus);
       -- Checken ob Schaden Bezeichnung in Schaeden Tabelle exisiert, falls nicht --> einfügen
+        -- FUNCTION f_get_schaeden_count_bi (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
         IF pa_schaeden.f_get_schaeden_count_bi(l_v_bezeichnung_in) < 1
         THEN
+          -- FUNCTION f_insert_schaden_i (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
           l_i_schaeden_id := pa_schaeden.f_insert_schaden_i(l_v_bezeichnung_in);
-        ELSE
+        ELSE 
+          -- FUNCTION f_get_schaeden_id_i (l_v_schaeden_in IN VARCHAR2) RETURN INTEGER;
           l_i_schaeden_id := pa_schaeden.f_get_schaeden_id_i(l_v_bezeichnung_in);
         END IF;
-      -- EXEMPLAR_ID und SCHAEDEN_ID in EXEMP_SCHAEDEN einfügen
-      -- pa_schaeden.sp_insert_exemp_schaeden(l_i_exemplar_id, l_i_schaeden_id);
-      -- SCHADEN_ID in Exemplar Tabelle updaten
-      -- pa_exemplar.sp_update_schaden(l_i_exemplar_id, l_i_schaeden_id);
       END IF;
       COMMIT;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Kunde hat kein Auto, dass er zurückgeben könnte!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
     END sp_auto_zurueckgeben;
   /*************************************************************************/
 END;

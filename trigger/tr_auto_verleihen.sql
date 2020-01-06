@@ -21,4 +21,5 @@ CREATE OR REPLACE TRIGGER tr_as_i_auto_verleihen
     DBMS_OUTPUT.PUT_LINE('---------------------------------------');
   END tr_as_i_auto_verleihen;
 /
+
 COMMIT;

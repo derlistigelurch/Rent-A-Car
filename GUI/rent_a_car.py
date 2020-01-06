@@ -13,15 +13,15 @@ def welcome_screen():
 
 def main_screen():
     print("---------------------------------------")
-    print("-Choose an option:                    -")
-    print("---------------------------------------")
-    print("- 1.) Kunde hinzufügen                -")
-    print("- 2.) Kunde bearbeiten                -")
-    print("- 3.) Auto verleihen                  -")
-    print("- 4.) Auto zurückgeben                -")
-    print("- 5.) Rechnung ausstellen             -")
-    print("-                                     -")
-    print("- 6.) Beenden                         -")
+    print("| Choose an option:                   |")
+    print("|-------------------------------------|")
+    print("| 1.) Kunde hinzufügen                |")
+    print("| 2.) Kunde bearbeiten                |")
+    print("| 3.) Auto verleihen                  |")
+    print("| 4.) Auto zurückgeben                |")
+    print("| 5.) Rechnung ausstellen             |")
+    print("|                                     |")
+    print("| 6.) Beenden                         |")
     print("---------------------------------------")
 
 

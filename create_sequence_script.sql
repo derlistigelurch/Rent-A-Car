@@ -64,12 +64,6 @@ CREATE SEQUENCE verleih_seq
   START WITH 1
   INCREMENT BY 1
   NOCACHE;
-  
--- CREATE SEQUENCE exemp_schaden_seq
---   MINVALUE 1
---  START WITH 1
---  INCREMENT BY 1
---  NOCACHE;
 
 CREATE SEQUENCE auto_details_seq
   MINVALUE 1

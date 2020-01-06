@@ -1,5 +1,3 @@
-SET SERVEROUTPUT ON;
-/
 /**********************************************************************
 /*
 /* Package: pa_person
@@ -27,6 +25,8 @@ AS
   /**
   /** Procedure: sp_change_name
   /** In: l_i_person_id - Person ID
+  /** In: l_v_vorname_in - Neuer Vorname
+  /** In: l_v_nachname_in - Neuer Nachname
   /** Developer: 
   /** Description: Ändert den Namen des Kunden
   /**
@@ -71,10 +71,6 @@ AS
       RETURNING PERSON_ID
       INTO l_i_person_id;
       RETURN l_i_person_id;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_insert_person_i;
   /*************************************************************************/
   
@@ -86,10 +82,6 @@ AS
       SET VORNAME = l_v_vorname_in,
           NACHNAME = l_v_nachname_in
       WHERE PERSON_ID = l_i_person_id_in;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END sp_change_name; 
   /*************************************************************************/
 
@@ -100,10 +92,6 @@ AS
       UPDATE PERSON
       SET ADRESS_ID = l_i_adress_id_in
       WHERE PERSON_ID = l_i_person_id_in;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END sp_update_adress_id;
   /*************************************************************************/
 
@@ -118,12 +106,6 @@ AS
       FROM KUNDE
       WHERE KUNDE_ID = l_i_kunde_id_in;
       RETURN l_i_kunde_id;
-    /*EXCEPTION
-      WHEN NO_DATA_FOUND THEN
-        RAISE NO_DATA_FOUND;
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_person_id;
   /*************************************************************************/
 END;

@@ -17,9 +17,15 @@ CREATE OR REPLACE TRIGGER tr_as_i_kunde_erstellen
     l_v_vorname VARCHAR2(30);
     l_v_nachname VARCHAR2(50);
   BEGIN
-    SELECT k.KUNDE_ID, k.VORNAME, k.NACHNAME
-    INTO l_i_kunde_id, l_v_vorname, l_v_nachname
-    FROM (SELECT KUNDE_ID, VORNAME, NACHNAME
+    SELECT k.KUNDE_ID, 
+           k.VORNAME, 
+           k.NACHNAME
+    INTO l_i_kunde_id, 
+         l_v_vorname, 
+         l_v_nachname
+    FROM (SELECT KUNDE_ID, 
+                 VORNAME, 
+                 NACHNAME
       FROM PERSON JOIN KUNDE ON PERSON.PERSON_ID = KUNDE.PERSON_ID
       ORDER BY KUNDE_ID DESC) k
     WHERE ROWNUM = 1;

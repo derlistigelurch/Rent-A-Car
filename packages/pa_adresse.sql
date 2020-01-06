@@ -1,5 +1,3 @@
-SET SERVEROUTPUT ON;
-/
 /**********************************************************************
 /*
 /* Package: pa_adresse
@@ -106,10 +104,6 @@ AS
       FROM POSTLEITZAHL
       WHERE PLZ = l_i_plz_in;
       RETURN l_bi_plz_count;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_plz_count_bi;
   /*************************************************************************/
   
@@ -119,10 +113,6 @@ AS
     BEGIN
       INSERT INTO POSTLEITZAHL (PLZ, ORTSNAME) 
       VALUES (l_i_plz_in, l_v_ortsname_in);
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END sp_insert_plz;
   /*************************************************************************/
 
@@ -151,10 +141,6 @@ AS
               AND PLZ = l_i_plz_in;
       END IF;
       RETURN l_bi_adress_count;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_get_adress_count_bi;
   /*************************************************************************/
 
@@ -183,13 +169,6 @@ AS
               AND PLZ = l_i_plz_in;
       END IF;
       RETURN l_i_adress_id;
-      /*EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-          RETURN 0;
-          --RAISE NO_DATA_FOUND
-        WHEN OTHERS THEN
-          pa_err.sp_err_handling(SQLCODE, SQLERRM);
-          RAISE;*/
     END f_get_adress_id_i;
   /*************************************************************************/
 
@@ -204,10 +183,6 @@ AS
       RETURNING ADRESS_ID
       INTO l_i_adress_id;
       RETURN l_i_adress_id;
-    /*EXCEPTION
-      WHEN OTHERS THEN
-        pa_err.sp_err_handling(SQLCODE, SQLERRM);
-        RAISE;*/
     END f_insert_adresse_i;
   /*************************************************************************/
   
@@ -217,7 +192,7 @@ AS
     l_i_adress_id INTEGER;
     l_i_person_id INTEGER;
     BEGIN
-      COMMIT;
+      SAVEPOINT l_savepoint;
       -- Person_ID herausfinen
       -- FUNCTION f_get_person_id (l_i_kunde_id_in IN INTEGER) RETURN INTEGER
       l_i_person_id := pa_person.f_get_person_id(l_i_kunde_id_in);
@@ -242,22 +217,19 @@ AS
       -- AdressId ändern
       -- PROCEDURE sp_update_adress_id (l_i_person_id_in IN INTEGER, l_i_adress_id_in IN INTEGER)
       pa_person.sp_update_adress_id(l_i_person_id, l_i_adress_id);
-      -- DBMS_OUTPUT.PUT_LINE('Adresse geändert!');
-      -- IF l_i_tuernr_in IS NULL
-      -- THEN
-      --   DBMS_OUTPUT.PUT_LINE('Neue Adresse: ' || l_v_strasse_in || ' ' || l_i_hausnr_in || ', ' || l_i_plz_in || ' ' || l_v_ortsname_in || ', Adress ID: ' || l_i_adress_id);
-      -- ELSE
-      --   DBMS_OUTPUT.PUT_LINE('Neue Adresse: ' || l_v_strasse_in || ' ' || l_i_hausnr_in || '/' || l_i_tuernr_in || ', ' || l_i_plz_in || ' ' || l_v_ortsname_in || ', Adress ID: ' || l_i_adress_id);
-      -- END IF;
       COMMIT;
     EXCEPTION
       WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE('Kunde nicht gefunden!');
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
       WHEN OTHERS THEN
         pa_err.sp_err_handling(SQLCODE, SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
-        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+        ROLLBACK TO l_savepoint;
     END sp_adresse_bearbeiten;
   /*************************************************************************/
 END;

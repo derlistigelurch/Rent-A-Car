@@ -23,4 +23,5 @@ CREATE OR REPLACE TRIGGER tr_as_u_person_name
   END IF;
   END tr_as_u_person_name;
 /
+
 COMMIT;

@@ -24,13 +24,13 @@ def auto_verleihen():
 
         textVar = cursor.var(str)
         statusVar = cursor.var(int)
-        print("------------------------------------")
+        print("---------------------------------------")
         while True:
             cursor.callproc("dbms_output.get_line", (textVar, statusVar))
             if statusVar.getvalue() is not 0:
                 break
             print(textVar.getvalue())
-        print("------------------------------------")
+        print("---------------------------------------")
         
         if count.getvalue() is not 0:
             kunden_id = int(input('Kundennummer: '))
@@ -93,13 +93,13 @@ def auto_zurueckgeben():
 
         textVar = cursor.var(str)
         statusVar = cursor.var(int)
-        print("------------------------------------")
+        print("---------------------------------------")
         while True:
             cursor.callproc("dbms_output.get_line", (textVar, statusVar))
             if statusVar.getvalue() is not 0:
                 break
             print(textVar.getvalue())
-        print("------------------------------------")
+        print("---------------------------------------")
         if count.getvalue() is not 0:
             kunden_id = int(input('Kundennummer: '))
 
@@ -194,13 +194,13 @@ def kunde_bearbeiten():
 
         textVar = cursor.var(str)
         statusVar = cursor.var(int)
-        print("------------------------------------")
+        print("---------------------------------------")
         while True:
             cursor.callproc("dbms_output.get_line", (textVar, statusVar))
             if statusVar.getvalue() is not 0:
                 break
             print(textVar.getvalue())
-        print("------------------------------------")
+        print("---------------------------------------")
         if count.getvalue() is not 0:
             kunden_id = int(input('Kundennummer: '))
             aendern = int(input('1.) Adresse ändern\n2.) Name ändern\n:'))
@@ -263,13 +263,13 @@ def rechnung_austellen():
 
         textVar = cursor.var(str)
         statusVar = cursor.var(int)
-        print("------------------------------------")
+        print("---------------------------------------")
         while True:
             cursor.callproc("dbms_output.get_line", (textVar, statusVar))
             if statusVar.getvalue() is not 0:
                 break
             print(textVar.getvalue())
-        print("------------------------------------")
+        print("---------------------------------------")
 
         if count.getvalue() > 0:
             kunden_id = int(input('Kundennummer: '))
@@ -287,7 +287,7 @@ def rechnung_austellen():
                     print(textVar.getvalue())
             else:
                 data = str(rechnung.getvalue()).split(',')
-                print("----- RECHNUNG ", data[0], " -----------------")
+                print("----- RECHNUNG ", data[0], " --------------------")
                 print("| Rechnungsnummer:", data[0])
                 print("| Kundennummer:", data[1])
                 print("| Vorname:", data[2])
@@ -297,7 +297,7 @@ def rechnung_austellen():
                 print("| Dauer (Tage):", data[7])
                 print("| Kosten pro Tag: €", data[8])
                 print("| Kosten Gesamt: €", data[9])
-                print("------------------------------------")
+                print("---------------------------------------")
 
     except ValueError:
         print('Daten haben das falsche Format!')
