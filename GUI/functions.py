@@ -35,35 +35,43 @@ def auto_verleihen():
         if count.getvalue() is not 0:
             kunden_id = int(input('Kundennummer: '))
         
-        cursor.callproc('pa_verleih.sp_autos_anzeigen', [count])
-
-        while True:
-            cursor.callproc("dbms_output.get_line", (textVar, statusVar))
-            if statusVar.getvalue() is not 0:
-                break
-            print(textVar.getvalue())
-
-        if count.getvalue() is not 0:
-            exemplar_id = int(input('Exemplar ID: '))
-
-            verliehen_von = str(input('Verliehen von: '))
-            # convert to datetime object
-            datetime_verliehen_von = datetime.strptime(
-                verliehen_von, '%d-%m-%Y').date()
-
-            verliehen_bis = str(input('Verliehen bis: '))
-            # convert to datetime object
-            datetime_verliehen_bis = datetime.strptime(
-                verliehen_bis, '%d-%m-%Y').date()
-
-            cursor.callproc('pa_verleih.sp_auto_verleihen', [
-                            kunden_id, exemplar_id, datetime_verliehen_von, datetime_verliehen_bis])
+            cursor.callproc('pa_verleih.sp_autos_anzeigen', [count])
 
             while True:
                 cursor.callproc("dbms_output.get_line", (textVar, statusVar))
                 if statusVar.getvalue() is not 0:
                     break
                 print(textVar.getvalue())
+
+            if count.getvalue() is not 0:
+                exemplar_id = int(input('Exemplar ID: '))
+
+                while(True):
+                    verliehen_von = str(input('Verliehen von: '))
+                    # convert to datetime object
+                    datetime_verliehen_von = datetime.strptime(
+                        verliehen_von, '%d-%m-%Y').date()
+
+                    verliehen_bis = str(input('Verliehen bis: '))
+                    # convert to datetime object
+                    datetime_verliehen_bis = datetime.strptime(
+                        verliehen_bis, '%d-%m-%Y').date()
+
+                    if datetime_verliehen_bis >= datetime_verliehen_von:
+                        break
+
+                    print("---------------------------------------")
+                    print("Verleih-Ende ist ungültig!")
+                    print("---------------------------------------")
+
+                cursor.callproc('pa_verleih.sp_auto_verleihen', [
+                                kunden_id, exemplar_id, datetime_verliehen_von, datetime_verliehen_bis])
+
+                while True:
+                    cursor.callproc("dbms_output.get_line", (textVar, statusVar))
+                    if statusVar.getvalue() is not 0:
+                        break
+                    print(textVar.getvalue())
 
     except ValueError:
         print('Daten haben das falsche Format!')
