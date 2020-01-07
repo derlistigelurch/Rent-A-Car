@@ -7,3 +7,5 @@
 /*********************************************************************/
 CREATE INDEX hersteller_bezeichnung_index
 ON HERSTELLER(BEZEICHNUNG);
+
+COMMIT;

@@ -37,4 +37,6 @@ DROP INDEX plz_ortsname_index;
 -- schaeden -- 
 DROP INDEX schaeden_beschreibung_index;
 
+-- hersteller --
+DROP INDEX herstller_bezeichnung_index;
 COMMIT;
